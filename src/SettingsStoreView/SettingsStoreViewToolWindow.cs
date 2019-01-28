@@ -2,7 +2,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
@@ -28,6 +27,7 @@ namespace SettingsStoreView
         public SettingsStoreViewToolWindow() : base(null)
         {
             Caption = "Settings Store";
+            BitmapImageMoniker = KnownMonikers.SettingsStoreViewToolWindow;
         }
 
         protected override void Initialize()

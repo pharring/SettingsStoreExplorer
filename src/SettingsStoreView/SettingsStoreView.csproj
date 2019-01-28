@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="HandleDoubleClickBehavior.cs" />
     <Compile Include="HandleEnterBehavior.cs" />
+    <Compile Include="KnownMonikers.cs" />
     <Compile Include="ModifyPropertyValueCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsStorePropertyNameConverter.cs" />
@@ -73,12 +74,17 @@
       <Link>LICENSE</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="CustomImages.vsct" />
+    <Content Include="SettingsStoreView.imagemanifest">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\SettingsStoreViewToolWindowCommand.png" />
+    <Resource Include="Resources\SettingsStoreViewToolWindow.16.16.png" />
+    <Resource Include="Resources\SettingsStoreViewToolWindowCommand.png" />
     <VSCTCompile Include="SettingsStoreViewPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
@@ -157,6 +163,7 @@
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +198,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Resources\SettingsStoreViewToolWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SettingsStoreViewToolWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
