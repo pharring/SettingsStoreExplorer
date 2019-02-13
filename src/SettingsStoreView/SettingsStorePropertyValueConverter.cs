@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.PlatformUI;
 
 namespace SettingsStoreView
 {
-    internal sealed class SettingsStorePropertyValueConverter : ValueConverter<object, string>
+    internal class SettingsStorePropertyValueConverter : ValueConverter<object, string>
     {
         protected override string Convert(object value, object parameter, CultureInfo culture)
         {
@@ -18,16 +18,21 @@ namespace SettingsStoreView
             if (value is byte[])
             {
                 var arr = (byte[])value;
+                if (arr.Length == 0)
+                {
+                    return "(zero-length binary value)";
+                }
+
                 var query = arr.Select(b => b.ToString("X2"));
                 return string.Join(" ", query);
             }
 
-            if (value is int)
+            if (value is uint)
             {
                 return string.Format(culture, "0x{0:x8} ({0})", value);
             }
 
-            if (value is long)
+            if (value is ulong)
             {
                 return string.Format(culture, "0x{0:x16} ({0})", value);
             }

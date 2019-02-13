@@ -52,9 +52,9 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="100" Header="Name" DisplayMemberBinding="{Binding Name, Converter={StaticResource propertyNameConverter}}" />
-                        <GridViewColumn Width="80" Header="Type" DisplayMemberBinding="{Binding Path=Type, Converter={StaticResource propertyTypeConverter}}" />
-                        <GridViewColumn Width="300" Header="Data" DisplayMemberBinding="{Binding Value, Converter={StaticResource propertyValueConverter}}" />
+                        <GridViewColumn Width="100" Header="Name" DisplayMemberBinding="{Binding Name, Mode=OneWay, Converter={StaticResource propertyNameConverter}}" />
+                        <GridViewColumn Width="80" Header="Type" DisplayMemberBinding="{Binding Path=Type, Mode=OneWay, Converter={StaticResource propertyTypeConverter}}" />
+                        <GridViewColumn Width="300" Header="Data" DisplayMemberBinding="{Binding Value, Mode=OneWay, Converter={StaticResource propertyValueConverter}}" />
                     </GridView>
                 </ListView.View>
             </ListView>

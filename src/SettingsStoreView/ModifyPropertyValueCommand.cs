@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace SettingsStoreView
 {
-    internal sealed class ModifyPropertyValueCommand : ICommand
+    internal class ModifyPropertyValueCommand : ICommand
     {
         public event EventHandler CanExecuteChanged
         {
@@ -36,17 +36,17 @@ namespace SettingsStoreView
                 return;
             }
 
-            IVsWritableSettingsStore store;
-            if (ErrorHandler.Failed(settingsManager.GetWritableSettingsStore((uint)property.Root.EnclosingScope, out store)))
+            IVsWritableSettingsStore writableStore;
+            if (ErrorHandler.Failed(settingsManager.GetWritableSettingsStore((uint)property.Root.EnclosingScope, out writableStore)))
             {
                 // Cannot get a writable setting store. The usual case is trying to modify a value under Config
-                // TODO: Show a message?
+                // TODO: Show a message? Run as admin?
                 return;
             }
 
 
             int exists;
-            ErrorHandler.ThrowOnFailure(store.PropertyExists(property.CollectionPath, property.Name, out exists));
+            ErrorHandler.ThrowOnFailure(writableStore.PropertyExists(property.CollectionPath, property.Name, out exists));
             if (exists == 0)
             {
                 // Property has been deleted
@@ -54,7 +54,52 @@ namespace SettingsStoreView
                 return;
             }
 
-            // TODO: Modal dlg
+            switch (property.Type)
+            {
+                case  __VsSettingsType.SettingsType_String:
+                    {
+                        var dialog = new EditStringDialog(property);
+                        if (dialog.ShowModal() == true)
+                        {
+                            ErrorHandler.ThrowOnFailure(writableStore.SetString(property.CollectionPath, property.Name, (string)property.Value));
+                        }
+                    }
+                    break;
+
+                case __VsSettingsType.SettingsType_Int:
+                    {
+                        var dialog = new EditIntegerDialog("Edit DWORD (32-bit) Value", DwordToStringConverter.Instance, property);
+                        if (dialog.ShowModal() == true)
+                        {
+                            ErrorHandler.ThrowOnFailure(writableStore.SetUnsignedInt(property.CollectionPath, property.Name, (uint)property.Value));
+                        }
+                    }
+                    break;
+
+                case __VsSettingsType.SettingsType_Int64:
+                    {
+                        var dialog = new EditIntegerDialog("Edit QWORD (64-bit) Value", QwordToStringConverter.Instance, property);
+                        if (dialog.ShowModal() == true)
+                        {
+                            ErrorHandler.ThrowOnFailure(writableStore.SetUnsignedInt64(property.CollectionPath, property.Name, (ulong)property.Value));
+                        }
+                    }
+                    break;
+
+                case __VsSettingsType.SettingsType_Binary:
+                    {
+                        var dialog = new EditBinaryDialog(property);
+                        if (dialog.ShowModal() == true)
+                        {
+                            var binary = (byte[])property.Value;
+                            ErrorHandler.ThrowOnFailure(writableStore.SetBinary(property.CollectionPath, property.Name, (uint)binary.Length, binary));
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 }

@@ -23,6 +23,9 @@ using Task = System.Threading.Tasks.Task;
 
 namespace SettingsStoreView
 {
+    /// <summary>
+    /// Base class for all items in the settings store data-model.
+    /// </summary>
     [DebuggerDisplay("Name = {Name} Path = {Path}")]
     public abstract class SettingsStoreItem : INotifyPropertyChanged
     {
@@ -74,6 +77,9 @@ namespace SettingsStoreView
             }
         }
 
+        /// <summary>
+        /// The root item. All items have a root (either "Config" or "User").
+        /// </summary>
         public RootSettingsStore Root
         {
             get
@@ -110,35 +116,51 @@ namespace SettingsStoreView
         }
 
         /// <summary>
-        /// Fire the <see cref="PropertyChanged"/> event.
+        /// Notify listeners of a property changed. The notification may be
+        /// posted asynchronously if the caller is not on the main thread.
         /// </summary>
         /// <param name="propertyName">The name of the property that has changed.</param>
         private void NotifyPropertyChanged(string propertyName)
         {
             if (ThreadHelper.CheckAccess())
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                InvokePropertyChanged(propertyName);
             }
             else
             {
 #pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
-                ThreadHelper.Generic.BeginInvoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+                ThreadHelper.Generic.BeginInvoke(() => InvokePropertyChanged(propertyName));
 #pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
             }
         }
+
+        /// <summary>
+        /// Fire the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that has changed.</param>
+        private void InvokePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    /// <summary>
+    /// A property in the settings store.
+    /// </summary>
     public sealed class SettingsStoreProperty : SettingsStoreItem
     {
-        public SettingsStoreProperty(SettingsStoreSubCollection parent, string name) : base(parent, name)
+        public SettingsStoreProperty(SettingsStoreSubCollection parent, string name, uint type) : base(parent, name)
         {
+            Type = (__VsSettingsType)type;
         }
 
-        public __VsSettingsType Type { get; set; }
-        public object Value { get; set; }
+        public __VsSettingsType Type { get; }
+
+        private object _value;
+        public object Value { get => _value; set => UpdateProperty(ref _value, value); }
         public string CollectionPath => Parent.Path;
     }
 
+    /// <summary>
+    /// A sub-collection in the settings store.
+    /// </summary>
     public class SettingsStoreSubCollection : SettingsStoreItem
     {
         private SettingsStoreSubCollection[] _subCollections;
@@ -217,32 +239,25 @@ namespace SettingsStoreView
         {
             var path = Path;
 
-            string name;
-            ErrorHandler.ThrowOnFailure(store.GetPropertyName(path, index, out name));
-            var property = new SettingsStoreProperty(this, name);
-
-            uint type;
-            ErrorHandler.ThrowOnFailure(store.GetPropertyType(path, name, out type));
-            property.Type = (__VsSettingsType)type;
+            ErrorHandler.ThrowOnFailure(store.GetPropertyName(path, index, out var name));
+            ErrorHandler.ThrowOnFailure(store.GetPropertyType(path, name, out var type));
+            var property = new SettingsStoreProperty(this, name, type);
 
             switch ((__VsSettingsType)type)
             {
                 case __VsSettingsType.SettingsType_String:
-                    string stringValue;
-                    ErrorHandler.ThrowOnFailure(store.GetString(path, name, out stringValue));
+                    ErrorHandler.ThrowOnFailure(store.GetString(path, name, out var stringValue));
                     property.Value = stringValue;
                     break;
 
                 case __VsSettingsType.SettingsType_Int:
-                    int intValue;
-                    ErrorHandler.ThrowOnFailure(store.GetInt(path, name, out intValue));
-                    property.Value = intValue;
+                    ErrorHandler.ThrowOnFailure(store.GetUnsignedInt(path, name, out var uintValue));
+                    property.Value = uintValue;
                     break;
 
                 case __VsSettingsType.SettingsType_Int64:
-                    long longValue;
-                    ErrorHandler.ThrowOnFailure(store.GetInt64(path, name, out longValue));
-                    property.Value = longValue;
+                    ErrorHandler.ThrowOnFailure(store.GetUnsignedInt64(path, name, out var ulongValue));
+                    property.Value = ulongValue;
                     break;
 
                 case __VsSettingsType.SettingsType_Binary:
@@ -261,6 +276,11 @@ namespace SettingsStoreView
             return property;
         }
 
+        /// <summary>
+        /// A place-holder for an unexpanded sub-collection. Initially it has just one
+        /// item but, when the <see cref="CreateSubCollections"/> method is called,
+        /// the sub-collection is replaced, asynchronously, with the real value.
+        /// </summary>
         private sealed class SettingsStoreSubCollectionPlaceholder : SettingsStoreSubCollection
         {
             public SettingsStoreSubCollectionPlaceholder(SettingsStoreSubCollection parent) : base(parent, "Please wait...")
@@ -282,6 +302,9 @@ namespace SettingsStoreView
         }
     }
 
+    /// <summary>
+    /// A root node in the settings store.
+    /// </summary>
     [DebuggerDisplay("Name = {Name} Root")]
     public sealed class RootSettingsStore : SettingsStoreSubCollection
     {
@@ -298,6 +321,9 @@ namespace SettingsStoreView
         public IVsSettingsStore SettingsStore { get; }
     }
 
+    /// <summary>
+    /// The view-model for the settings store. Represents the "Config" and "User" trees.
+    /// </summary>
     public sealed class SettingsStoreViewModel
     {
         public SettingsStoreSubCollection[] Root { get; set; }

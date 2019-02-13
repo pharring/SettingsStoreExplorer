@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.PlatformUI;
 
 namespace SettingsStoreView
 {
-    internal sealed class SettingsStorePropertyNameConverter : ValueConverter<string, string>
+    internal class SettingsStorePropertyNameConverter : ValueConverter<string, string>
     {
         protected override string Convert(string value, object parameter, CultureInfo culture)
         {

@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace SettingsStoreView
 {
-    internal sealed class SettingsStoreTypeToRegTypeConverter : ValueConverter<__VsSettingsType, string>
+    internal class SettingsStoreTypeToRegTypeConverter : ValueConverter<__VsSettingsType, string>
     {
         protected override string Convert(__VsSettingsType value, object parameter, CultureInfo culture)
         {
