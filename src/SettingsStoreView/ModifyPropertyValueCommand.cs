@@ -16,17 +16,13 @@ namespace SettingsStoreView
             remove { }
         }
 
-        public bool CanExecute(object parameter)
-        {
-            return parameter as SettingsStoreProperty != null;
-        }
+        public bool CanExecute(object parameter) => parameter as SettingsStoreProperty != null;
 
         public void Execute(object parameter)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var property = parameter as SettingsStoreProperty;
-            if (property == null)
+            if (!(parameter is SettingsStoreProperty property))
             {
                 return;
             }
@@ -36,8 +32,7 @@ namespace SettingsStoreView
                 return;
             }
 
-            IVsWritableSettingsStore writableStore;
-            if (ErrorHandler.Failed(settingsManager.GetWritableSettingsStore((uint)property.Root.EnclosingScope, out writableStore)))
+            if (ErrorHandler.Failed(settingsManager.GetWritableSettingsStore((uint)property.Root.EnclosingScope, out var writableStore)))
             {
                 // Cannot get a writable setting store. The usual case is trying to modify a value under Config
                 // TODO: Show a message? Run as admin?
@@ -45,8 +40,7 @@ namespace SettingsStoreView
             }
 
 
-            int exists;
-            ErrorHandler.ThrowOnFailure(writableStore.PropertyExists(property.CollectionPath, property.Name, out exists));
+            ErrorHandler.ThrowOnFailure(writableStore.PropertyExists(property.CollectionPath, property.Name, out var exists));
             if (exists == 0)
             {
                 // Property has been deleted

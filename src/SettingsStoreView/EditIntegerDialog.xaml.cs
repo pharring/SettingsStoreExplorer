@@ -29,8 +29,8 @@ namespace SettingsStoreView
         /// </summary>
         public NumberStyles ValueFormat
         {
-            get { return (NumberStyles)GetValue(ValueFormatProperty); }
-            set { SetValue(ValueFormatProperty, value); }
+            get => (NumberStyles)GetValue(ValueFormatProperty);
+            set => SetValue(ValueFormatProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for ValueFormat.  This enables animation, styling, binding, etc...

@@ -62,10 +62,8 @@ namespace SettingsStoreView
         /// </summary>
         /// <param name="sender">The sender (text box)</param>
         /// <param name="e">The event arguments.</param>
-        private void HexBytesTextBox_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            asciiTextBox.InsertPointAndSelectionLength = hexBytesTextBox.InsertPointAndSelectionLength;
-        }
+        private void HexBytesTextBox_SelectionChanged(object sender, RoutedEventArgs e) 
+            => asciiTextBox.InsertPointAndSelectionLength = hexBytesTextBox.InsertPointAndSelectionLength;
 
         /// <summary>
         /// Handler for <see cref="TextBoxBase.SelectionChanged"/> event on the ASCII text box.
@@ -73,8 +71,6 @@ namespace SettingsStoreView
         /// <param name="sender">The sender (text box)</param>
         /// <param name="e">The event arguments.</param>
         private void AsciiTextBox_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            hexBytesTextBox.InsertPointAndSelectionLength = asciiTextBox.InsertPointAndSelectionLength;
-        }
+            => hexBytesTextBox.InsertPointAndSelectionLength = asciiTextBox.InsertPointAndSelectionLength;
     }
 }

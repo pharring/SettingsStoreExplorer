@@ -15,9 +15,8 @@ namespace SettingsStoreView
                 return (string)value;
             }
 
-            if (value is byte[])
+            if (value is byte[] arr)
             {
-                var arr = (byte[])value;
                 if (arr.Length == 0)
                 {
                     return "(zero-length binary value)";
