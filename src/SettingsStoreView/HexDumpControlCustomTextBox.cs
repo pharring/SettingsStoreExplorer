@@ -17,7 +17,7 @@ namespace SettingsStoreView
         /// <summary>
         /// The number of bytes per row of hex dump.
         /// </summary>
-        private const int BytesPerRow = 8;
+        private const int c_bytesPerRow = 8;
 
         /// <summary>
         /// The current length of the byte array.
@@ -105,7 +105,7 @@ namespace SettingsStoreView
 
                 offset++;
 
-                if (offset == BytesPerRow)
+                if (offset == c_bytesPerRow)
                 {
                     sb.AppendLine();
                     offset = 0;
@@ -214,13 +214,13 @@ namespace SettingsStoreView
         {
             // Note that col may be from 0 to BytesPerRow **inclusive**.
             // i.e. we can place the insert point off the end of a row.
-            var newInsertPoint = row * BytesPerRow + col;
+            var newInsertPoint = (row * c_bytesPerRow) + col;
             if (newInsertPoint > _currentLength)
             {
-                col = _currentLength % BytesPerRow;
+                col = _currentLength % c_bytesPerRow;
             }
 
-            var quantizedCaretIndex = GetCharacterIndexFromLineIndex(row) + col * _quantumWidth;
+            var quantizedCaretIndex = GetCharacterIndexFromLineIndex(row) + (col * _quantumWidth);
             MoveSelection(quantizedCaretIndex, 0);
         }
 
@@ -235,8 +235,8 @@ namespace SettingsStoreView
         /// <param name="colEnd">The column of the end of the selection.</param>
         private void UpdateSelection(int rowStart, int colStart, int rowEnd, int colEnd)
         {
-            var selectionStart = GetCharacterIndexFromLineIndex(rowStart) + colStart * _quantumWidth;
-            var selectionEnd = GetCharacterIndexFromLineIndex(rowEnd) + colEnd * _quantumWidth;
+            var selectionStart = GetCharacterIndexFromLineIndex(rowStart) + (colStart * _quantumWidth);
+            var selectionEnd = GetCharacterIndexFromLineIndex(rowEnd) + (colEnd * _quantumWidth);
             var selectionLength = selectionEnd - selectionStart;
 
             if (SelectionStart != selectionStart || SelectionLength != selectionLength)
@@ -271,7 +271,7 @@ namespace SettingsStoreView
 
             // Note: The last column on one row, is the same as column 0 on the next row.
             // So we allow 0 to BytesPerRow **inclusive**.
-            col = Math.Min(col, BytesPerRow);
+            col = Math.Min(col, c_bytesPerRow);
 
             return true;
         }
@@ -282,7 +282,7 @@ namespace SettingsStoreView
         /// </summary>
         /// <param name="offset">Offset into the bytes.</param>
         /// <returns>The row,col.</returns>
-        private static (int row, int col) GetRowCol(int offset) => (offset / BytesPerRow, offset % BytesPerRow);
+        private static (int row, int col) GetRowCol(int offset) => (offset / c_bytesPerRow, offset % c_bytesPerRow);
 
         /// <summary>
         /// Get the byte offset from the given (row, col).
@@ -291,7 +291,7 @@ namespace SettingsStoreView
         /// <param name="row">The row.</param>
         /// <param name="col">The column.</param>
         /// <returns></returns>
-        private static int ByteOffsetFromRowCol(int row, int col) => row * BytesPerRow + col;
+        private static int ByteOffsetFromRowCol(int row, int col) => (row * c_bytesPerRow) + col;
 
         /// <summary>
         /// Get the byte offset from the given caret index.
@@ -324,7 +324,7 @@ namespace SettingsStoreView
         /// <param name="col">The column.</param>
         /// <returns>The caret index.</returns>
         private int CaretIndexFromRowCol(int row, int col)
-            => GetCharacterIndexFromLineIndex(row) + col * _quantumWidth;
+            => GetCharacterIndexFromLineIndex(row) + (col * _quantumWidth);
 
         /// <summary>
         /// PreviewKeyDown handler.
@@ -375,7 +375,7 @@ namespace SettingsStoreView
             {
                 // If you start with Shift+Left or Shift+Up, then the anchor point is at the
                 // end of the range.
-                _isAnchorPointAtTheEndOfSelectedRange = (e.Key == Key.Left || e.Key == Key.Up);
+                _isAnchorPointAtTheEndOfSelectedRange = e.Key == Key.Left || e.Key == Key.Up;
             }
 
             var caretIndex = SelectionStart + (_isAnchorPointAtTheEndOfSelectedRange ? 0 : selectionLength);
@@ -438,7 +438,7 @@ namespace SettingsStoreView
                     }
                     else
                     {
-                        col = BytesPerRow - 1;
+                        col = c_bytesPerRow - 1;
                         row--;
                     }
 
@@ -466,7 +466,7 @@ namespace SettingsStoreView
                     break;
 
                 case Key.Down:
-                    int lastRow = _currentLength / BytesPerRow;
+                    int lastRow = _currentLength / c_bytesPerRow;
                     if (row < lastRow)
                     {
                         UpdateSelection(CaretIndexFromRowCol(row + 1, col));
@@ -498,9 +498,9 @@ namespace SettingsStoreView
                             UpdateSelection(CaretIndexFromByteOffset(_currentLength));
                         }
                     }
-                    else if (col != BytesPerRow)
+                    else if (col != c_bytesPerRow)
                     {
-                        UpdateSelection(CaretIndexFromRowCol(row, BytesPerRow));
+                        UpdateSelection(CaretIndexFromRowCol(row, c_bytesPerRow));
                     }
                     e.Handled = true;
                     break;
