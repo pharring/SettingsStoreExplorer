@@ -5,6 +5,8 @@
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
     <UseCodebase>true</UseCodebase>
+    <!-- Do not deploy the VSIX in Azure DevOps CI builds. -->
+    <DeployExtension Condition="'$(BUILD_BUILDID)' != ''">false</DeployExtension>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
