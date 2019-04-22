@@ -18,7 +18,7 @@
         <Label Margin="10,10,10,4" Content="Value _name:"/>
         <TextBox Margin="10,0" Text="{Binding Name, Mode=OneTime}" IsReadOnly="True" Background="{Binding Background, ElementName=editIntegerDialog}" />
         <Label Margin="10,10,10,4" Content="_Value data:"/>
-        <local:HexDumpTextBox x:Name="ValueTextBox" Margin="10,0" Height="170" FontFamily="Consolas" DataContext="{Binding Value}" />
+        <local:HexDumpControl x:Name="ValueTextBox" Margin="10,0" Height="170" FontFamily="Consolas" DataContext="{Binding Value}" />
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,10,0,0">
             <ui:DialogButton Name="OkButton" Content="OK" Uid="Button_OK" IsDefault="True" Click="OkButton_Click" />
             <ui:DialogButton Name="CancelButton" Content="Cancel" Uid="Button_Cancel" IsCancel="True" />
