@@ -26,17 +26,9 @@ namespace SettingsStoreView
                 return string.Join(" ", query);
             }
 
-            if (value is uint)
-            {
-                return string.Format(culture, "0x{0:x8} ({0})", value);
-            }
-
-            if (value is ulong)
-            {
-                return string.Format(culture, "0x{0:x16} ({0})", value);
-            }
-
-            return "<unknown>";
+            return value is uint
+                ? string.Format(culture, "0x{0:x8} ({0})", value)
+                : value is ulong ? string.Format(culture, "0x{0:x16} ({0})", value) : "<unknown>";
         }
     }
 }

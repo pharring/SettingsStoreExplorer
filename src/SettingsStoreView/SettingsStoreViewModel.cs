@@ -62,18 +62,7 @@ namespace SettingsStoreView
         /// <summary>
         /// Full path to this settings collection, including the root node.
         /// </summary>
-        public string FullPath
-        {
-            get
-            {
-                if (Parent == null)
-                {
-                    return Name;
-                }
-
-                return CombinePaths(Parent.FullPath, Name);
-            }
-        }
+        public string FullPath => Parent == null ? Name : CombinePaths(Parent.FullPath, Name);
 
         /// <summary>
         /// The root item. All items have a root (either "Config" or "User").

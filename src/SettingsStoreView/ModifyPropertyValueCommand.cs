@@ -16,7 +16,7 @@ namespace SettingsStoreView
             remove { }
         }
 
-        public bool CanExecute(object parameter) => parameter as SettingsStoreProperty != null;
+        public bool CanExecute(object parameter) => parameter is SettingsStoreProperty;
 
         public void Execute(object parameter)
         {
