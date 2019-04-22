@@ -40,23 +40,14 @@ namespace SettingsStoreView
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
+            var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
         }
 
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static SettingsStoreViewToolWindowCommand Instance
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the service provider from the owner package.
-        /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider => _package;
+        public static SettingsStoreViewToolWindowCommand Instance { get; private set; }
 
         /// <summary>
         /// Initializes the singleton instance of the command.

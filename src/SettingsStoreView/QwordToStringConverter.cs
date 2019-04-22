@@ -12,10 +12,8 @@ namespace SettingsStoreView
         {
         }
 
-        public override string ToString(object value, NumberStyles style, CultureInfo culture)
-        {
-            return ((ulong)value).ToString(FormatStringFromStyle(style), culture);
-        }
+        public override string ToString(object value, NumberStyles style, CultureInfo culture) 
+            => ((ulong)value).ToString(FormatStringFromStyle(style), culture);
 
         public override bool TryParse(string text, NumberStyles style, CultureInfo culture, out object value)
         {

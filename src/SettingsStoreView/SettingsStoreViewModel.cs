@@ -39,10 +39,8 @@ namespace SettingsStoreView
 
         protected SettingsStoreSubCollection Parent { get; }
 
-        private static string CombinePaths(string path1, string path2)
-        {
-            return string.IsNullOrEmpty(path1) ? path2 : (path1 + @"\" + path2);
-        }
+        private static string CombinePaths(string path1, string path2) 
+            => string.IsNullOrEmpty(path1) ? path2 : (path1 + @"\" + path2);
 
         /// <summary>
         /// Path to this settings collection, not including the root node.
@@ -182,7 +180,7 @@ namespace SettingsStoreView
 
             // Don't use GetSubCollectionCount because it's essentially a full enumeration
             // which defeats this optimization.
-            if (ErrorHandler.Failed(store.GetSubCollectionName(Path, 0u, out string subCollectionName)))
+            if (ErrorHandler.Failed(store.GetSubCollectionName(Path, 0u, out _)))
             {
                 return Array.Empty<SettingsStoreSubCollection>();
             }
@@ -220,8 +218,7 @@ namespace SettingsStoreView
             Task.Run(() =>
             {
                 var store = Root.SettingsStore;
-                uint propertyCount;
-                ErrorHandler.ThrowOnFailure(store.GetPropertyCount(Path, out propertyCount));
+                ErrorHandler.ThrowOnFailure(store.GetPropertyCount(Path, out var propertyCount));
 
                 var properties = new SettingsStoreProperty[propertyCount];
                 for (uint i = 0; i < propertyCount; i++)

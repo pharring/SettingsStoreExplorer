@@ -7,9 +7,7 @@ namespace SettingsStoreView
 {
     internal class SettingsStorePropertyNameConverter : ValueConverter<string, string>
     {
-        protected override string Convert(string value, object parameter, CultureInfo culture)
-        {
-            return string.IsNullOrEmpty(value) ? "(Default)" : value;
-        }
+        protected override string Convert(string value, object parameter, CultureInfo culture) 
+            => string.IsNullOrEmpty(value) ? "(Default)" : value;
     }
 }

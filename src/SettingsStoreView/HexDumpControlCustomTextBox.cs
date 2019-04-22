@@ -267,7 +267,7 @@ namespace SettingsStoreView
             col = caretIndex - GetCharacterIndexFromLineIndex(row);
 
             // Convert to byte array space
-            col = col / _quantumWidth;
+            col /= _quantumWidth;
 
             // Note: The last column on one row, is the same as column 0 on the next row.
             // So we allow 0 to BytesPerRow **inclusive**.

@@ -9,9 +9,7 @@ namespace SettingsStoreView
     internal class BinaryToHexDumpConverter : ValueConverter<byte[], string>
     {
         protected override string Convert(byte[] value, object parameter, CultureInfo culture)
-        {
-            return value == null ? "<null>" : BinaryToString(value);
-        }
+            => value == null ? "<null>" : BinaryToString(value);
 
         /// <summary>
         /// Render the byte array as a string in hex-dump format.

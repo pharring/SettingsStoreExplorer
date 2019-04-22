@@ -12,10 +12,7 @@ namespace SettingsStoreView
     {
         public const int BytesPerRow = 8;
 
-        public HexDumpAddressTextBox()
-        {
-            DataContextChanged += OnDataContextChanged;
-        }
+        public HexDumpAddressTextBox() => DataContextChanged += OnDataContextChanged;
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
