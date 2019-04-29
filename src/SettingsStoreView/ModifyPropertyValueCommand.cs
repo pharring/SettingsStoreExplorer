@@ -21,6 +21,7 @@ namespace SettingsStoreView
         public void Execute(object parameter)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+            Telemetry.Client.TrackEvent(nameof(ModifyPropertyValueCommand) + "." + nameof(Execute));
 
             if (!(parameter is SettingsStoreProperty property))
             {
@@ -36,6 +37,7 @@ namespace SettingsStoreView
             {
                 // Cannot get a writable setting store. The usual case is trying to modify a value under Config
                 // TODO: Show a message? Run as admin?
+                Telemetry.Client.TrackEvent("No writable store");
                 return;
             }
 
@@ -45,6 +47,7 @@ namespace SettingsStoreView
             {
                 // Property has been deleted
                 // TODO: Show a message
+                Telemetry.Client.TrackEvent("Property deleted");
                 return;
             }
 
@@ -52,6 +55,7 @@ namespace SettingsStoreView
             {
                 case  __VsSettingsType.SettingsType_String:
                     {
+                        Telemetry.Client.TrackPageView(nameof(EditStringDialog));
                         var dialog = new EditStringDialog(property);
                         if (dialog.ShowModal() == true)
                         {
@@ -62,6 +66,7 @@ namespace SettingsStoreView
 
                 case __VsSettingsType.SettingsType_Int:
                     {
+                        Telemetry.Client.TrackPageView(nameof(EditIntegerDialog) + "(32)");
                         var dialog = new EditIntegerDialog("Edit DWORD (32-bit) Value", DwordToStringConverter.Instance, property);
                         if (dialog.ShowModal() == true)
                         {
@@ -72,6 +77,7 @@ namespace SettingsStoreView
 
                 case __VsSettingsType.SettingsType_Int64:
                     {
+                        Telemetry.Client.TrackPageView(nameof(EditIntegerDialog) + "(64)");
                         var dialog = new EditIntegerDialog("Edit QWORD (64-bit) Value", QwordToStringConverter.Instance, property);
                         if (dialog.ShowModal() == true)
                         {
@@ -82,6 +88,7 @@ namespace SettingsStoreView
 
                 case __VsSettingsType.SettingsType_Binary:
                     {
+                        Telemetry.Client.TrackPageView(nameof(EditBinaryDialog));
                         var dialog = new EditBinaryDialog(property);
                         if (dialog.ShowModal() == true)
                         {
