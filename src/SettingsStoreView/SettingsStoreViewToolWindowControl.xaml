@@ -18,6 +18,7 @@
             </ResourceDictionary.MergedDictionaries>
             <my:SettingsStoreItemToImageMonikerConverter x:Key="settingsStoreItemToMonikerConverter" />
             <my:SettingsStoreTypeToRegTypeConverter x:Key="propertyTypeConverter" />
+            <my:SettingsStoreTypeToImageMonikerConverter x:Key="propertyTypeToMonikerConverter" />
             <my:SettingsStorePropertyNameConverter x:Key="propertyNameConverter" />
             <my:SettingsStorePropertyValueConverter x:Key="propertyValueConverter" />
             <my:ModifyPropertyValueCommand x:Key="modifyPropertyValueCommand" />
@@ -40,7 +41,7 @@
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type my:SettingsStoreSubCollection}" ItemsSource="{Binding Path=SubCollections}">
                         <StackPanel Orientation="Horizontal" Margin="0,1">
-                            <imaging:CrispImage Moniker="{Binding Converter={StaticResource settingsStoreItemToMonikerConverter}}" Width="16" Height="16" Stretch="Fill" />
+                            <imaging:CrispImage Moniker="{Binding Mode=OneWay, Converter={StaticResource settingsStoreItemToMonikerConverter}}" Width="16" Height="16" />
                             <TextBlock Text="{Binding Path=Name, Mode=OneWay}" Margin="4,0" />
                         </StackPanel>
                     </HierarchicalDataTemplate>
@@ -57,9 +58,16 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Width="100" Header="Name" DisplayMemberBinding="{Binding Name, Mode=OneWay, Converter={StaticResource propertyNameConverter}}" />
-                        <GridViewColumn Width="80" Header="Type" DisplayMemberBinding="{Binding Path=Type, Mode=OneWay, Converter={StaticResource propertyTypeConverter}}" />
-                        <GridViewColumn Width="300" Header="Data" DisplayMemberBinding="{Binding Value, Mode=OneWay, Converter={StaticResource propertyValueConverter}}" />
+                        <GridViewColumn Width="28">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <imaging:CrispImage Moniker="{Binding Path=Type, Mode=OneWay, Converter={StaticResource propertyTypeToMonikerConverter}}" Width="16" Height="16" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="140" Header="Name" DisplayMemberBinding="{Binding Name, Mode=OneWay, Converter={StaticResource propertyNameConverter}}" />
+                        <GridViewColumn Width="82" Header="Type" DisplayMemberBinding="{Binding Path=Type, Mode=OneWay, Converter={StaticResource propertyTypeConverter}}" />
+                        <GridViewColumn Width="340" Header="Data" DisplayMemberBinding="{Binding Value, Mode=OneWay, Converter={StaticResource propertyValueConverter}}" />
                     </GridView>
                 </ListView.View>
             </ListView>

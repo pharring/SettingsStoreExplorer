@@ -84,8 +84,9 @@
     <Compile Include="ModifyPropertyValueCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QwordToStringConverter.cs" />
-    <Compile Include="SettingsStoreItemToImageConverter.cs" />
+    <Compile Include="SettingsStoreItemToImageMonikerConverter.cs" />
     <Compile Include="SettingsStorePropertyNameConverter.cs" />
+    <Compile Include="SettingsStoreTypeToImageMonikerConverter.cs" />
     <Compile Include="SettingsStorePropertyValueConverter.cs" />
     <Compile Include="SettingsStoreTypeToRegTypeConverter.cs" />
     <Compile Include="SettingsStoreViewModel.cs" />

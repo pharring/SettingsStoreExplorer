@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Paul Harrington.  All Rights Reserved.  Licensed under the MIT License.  See LICENSE in the project root for license information.
 
-using System;
 using System.Globalization;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.PlatformUI;
@@ -29,7 +28,7 @@ namespace SettingsStoreView
                     return VsKnownMonikers.FolderClosed;
 
                 default:
-                    throw new ArgumentException("Unrecognized item type.");
+                    return base.Convert(value, parameter, culture);
             }
         }
     }
