@@ -45,6 +45,8 @@ namespace SettingsStoreView
                 ThreadHelper.ThrowIfNotOnUIThread();
                 var settingsManager = GetService(typeof(SVsSettingsManager)) as IVsSettingsManager;
                 control.InitializeViewModel(settingsManager);
+
+                Telemetry.Client.TrackPageView(nameof(SettingsStoreViewToolWindow));
             });
         }
     }
