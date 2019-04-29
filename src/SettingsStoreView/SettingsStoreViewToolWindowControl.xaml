@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:my="clr-namespace:SettingsStoreView"
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:imaging="clr-namespace:Microsoft.VisualStudio.Imaging;assembly=Microsoft.VisualStudio.Imaging"
              Background="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}"
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"
              mc:Ignorable="d"
@@ -15,6 +16,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="VsThemeStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <my:SettingsStoreItemToImageMonikerConverter x:Key="settingsStoreItemToMonikerConverter" />
             <my:SettingsStoreTypeToRegTypeConverter x:Key="propertyTypeConverter" />
             <my:SettingsStorePropertyNameConverter x:Key="propertyNameConverter" />
             <my:SettingsStorePropertyValueConverter x:Key="propertyValueConverter" />
@@ -37,7 +39,10 @@
             <TreeView Grid.Column="0" x:Name="treeView" ItemsSource="{Binding Path=Root, Mode=OneWay}">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type my:SettingsStoreSubCollection}" ItemsSource="{Binding Path=SubCollections}">
-                        <TextBlock Text="{Binding Path=Name, Mode=OneWay}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,1">
+                            <imaging:CrispImage Moniker="{Binding Converter={StaticResource settingsStoreItemToMonikerConverter}}" Width="16" Height="16" Stretch="Fill" />
+                            <TextBlock Text="{Binding Path=Name, Mode=OneWay}" Margin="4,0" />
+                        </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.Resources>
             </TreeView>
