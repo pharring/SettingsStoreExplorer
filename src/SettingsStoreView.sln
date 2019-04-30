@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{0F4DD1ED-029B-46C7-8F27-3412207BE18E}"
 	ProjectSection(SolutionItems) = preProject
 		..\marketplace\images\QuickSearch.png = ..\marketplace\images\QuickSearch.png
+		..\marketplace\images\SettingsStoreToolWindow.png = ..\marketplace\images\SettingsStoreToolWindow.png
 		..\marketplace\images\ViewMenu.png = ..\marketplace\images\ViewMenu.png
 	EndProjectSection
 EndProject
