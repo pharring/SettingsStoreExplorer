@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -34,10 +35,10 @@ namespace SettingsStoreView
         protected SettingsStoreItem(SettingsStoreSubCollection parent, string name)
         {
             Parent = parent;
-            Name = name;
+            _name = name;
         }
 
-        protected SettingsStoreSubCollection Parent { get; }
+        public SettingsStoreSubCollection Parent { get; }
 
         private static string CombinePaths(string path1, string path2) 
             => string.IsNullOrEmpty(path1) ? path2 : (path1 + @"\" + path2);
@@ -81,9 +82,45 @@ namespace SettingsStoreView
         }
 
         /// <summary>
+        /// Backing field for <see cref="Name" />
+        /// </summary>
+        private string _name;
+
+        /// <summary>
         /// The node's actual name in the settings store.
         /// </summary>
-        public string Name { get; }
+        public string Name
+        {
+            get => _name;
+            private set
+            {
+                // Support for rename
+                if (UpdateProperty(ref _name, value))
+                {
+                    NotifyPropertyChanged(nameof(Path));
+                    NotifyPropertyChanged(nameof(FullPath));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Rename the item.
+        /// </summary>
+        /// <param name="newName"></param>
+        public void Rename(string newName)
+        {
+            if (!CanRename)
+            {
+                throw new InvalidOperationException("Cannot rename this item.");
+            }
+
+            Name = newName;
+        }
+
+        /// <summary>
+        /// Indicates whether the item can be renamed.
+        /// </summary>
+        protected virtual bool CanRename => true;
 
         /// <summary>
         /// Update the backing field of a property and fire notification if necessary.
@@ -93,13 +130,17 @@ namespace SettingsStoreView
         /// <param name="field">The field to update.</param>
         /// <param name="newValue">The new value.</param>
         /// <param name="propertyName">The name of the property being updated.</param>
-        protected void UpdateProperty<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
+        /// <returns>true if the property was updated.</returns>
+        protected bool UpdateProperty<T>(ref T field, T newValue, [CallerMemberName] string propertyName = null)
         {
-            if (!EqualityComparer<T>.Default.Equals(field, newValue))
+            if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
-                field = newValue;
-                NotifyPropertyChanged(propertyName);
+                return false;
             }
+
+            field = newValue;
+            NotifyPropertyChanged(propertyName);
+            return true;
         }
 
         /// <summary>
@@ -107,7 +148,7 @@ namespace SettingsStoreView
         /// posted asynchronously if the caller is not on the main thread.
         /// </summary>
         /// <param name="propertyName">The name of the property that has changed.</param>
-        private void NotifyPropertyChanged(string propertyName)
+        protected void NotifyPropertyChanged(string propertyName)
         {
             if (ThreadHelper.CheckAccess())
             {
@@ -133,9 +174,47 @@ namespace SettingsStoreView
     /// </summary>
     public sealed class SettingsStoreProperty : SettingsStoreItem
     {
-        public SettingsStoreProperty(SettingsStoreSubCollection parent, string name, uint type) : base(parent, name)
+        private SettingsStoreProperty(SettingsStoreSubCollection parent, string name, __VsSettingsType type, object value) : base(parent, name)
         {
-            Type = (__VsSettingsType)type;
+            Type = type;
+            _value = value;
+        }
+
+        public static SettingsStoreProperty CreateInstance(SettingsStoreSubCollection parent, string name, __VsSettingsType type)
+        {
+            var initialValue = GetInitialValue(parent, name, type);
+            return new SettingsStoreProperty(parent, name, type, initialValue);
+        }
+
+        private static object GetInitialValue(SettingsStoreSubCollection parent, string name, __VsSettingsType type)
+        {
+            var store = parent.Root.SettingsStore;
+            var path = parent.Path;
+
+            switch (type)
+            {
+                case __VsSettingsType.SettingsType_String:
+                    ErrorHandler.ThrowOnFailure(store.GetString(path, name, out var stringValue));
+                    return stringValue;
+
+                case __VsSettingsType.SettingsType_Int:
+                    ErrorHandler.ThrowOnFailure(store.GetUnsignedInt(path, name, out var uintValue));
+                    return uintValue;
+
+                case __VsSettingsType.SettingsType_Int64:
+                    ErrorHandler.ThrowOnFailure(store.GetUnsignedInt64(path, name, out var ulongValue));
+                    return ulongValue;
+
+                case __VsSettingsType.SettingsType_Binary:
+                    uint[] actualByteLength = { 0 };
+                    ErrorHandler.ThrowOnFailure(store.GetBinary(path, name, 0, null, actualByteLength));
+                    byte[] binaryValue = new byte[actualByteLength[0]];
+                    ErrorHandler.ThrowOnFailure(store.GetBinary(path, name, actualByteLength[0], binaryValue, actualByteLength));
+                    return binaryValue;
+
+                default:
+                    return null;
+            }
         }
 
         public __VsSettingsType Type { get; }
@@ -150,18 +229,24 @@ namespace SettingsStoreView
     /// </summary>
     public class SettingsStoreSubCollection : SettingsStoreItem
     {
-        private SettingsStoreSubCollection[] _subCollections;
-        private SettingsStoreProperty[] _properties;
+        private ObservableCollection<SettingsStoreSubCollection> _subCollections;
+        private ObservableCollection<SettingsStoreProperty> _properties;
 
         public SettingsStoreSubCollection(SettingsStoreSubCollection parent, string name) : base(parent, name)
         {
         }
 
-        public SettingsStoreSubCollection[] SubCollections => _subCollections ?? (_subCollections = CreateSubCollections());
+        public ObservableCollection<SettingsStoreSubCollection> SubCollections => _subCollections ?? (_subCollections = new ObservableCollection<SettingsStoreSubCollection>(CreateSubCollections()));
 
-        public SettingsStoreProperty[] Properties => _properties ?? (_properties = PopulateProperties());
+        public ObservableCollection<SettingsStoreProperty> Properties => _properties ?? (_properties = new ObservableCollection<SettingsStoreProperty>(InitializeProperties()));
 
-        protected virtual SettingsStoreSubCollection[] CreateSubCollections()
+        private IEnumerable<SettingsStoreProperty> InitializeProperties()
+        {
+            Task.Run(() => PopulatePropertiesAsync()).Forget();
+            return Array.Empty<SettingsStoreProperty>();
+        }
+
+        protected virtual IEnumerable<SettingsStoreSubCollection> CreateSubCollections()
         {
             // We don't need to know the full collection yet, just whether the collection
             // is empty or not so that the tree view knows whether to display the expander.
@@ -169,29 +254,25 @@ namespace SettingsStoreView
 
             // Don't use GetSubCollectionCount because it's essentially a full enumeration
             // which defeats this optimization.
-            if (ErrorHandler.Failed(store.GetSubCollectionName(Path, 0u, out _)))
+            if (ErrorHandler.Succeeded(store.GetSubCollectionName(Path, 0u, out _)))
             {
-                return Array.Empty<SettingsStoreSubCollection>();
+                // Create a single placeholder that knows how to expand its parent.
+                yield return new SettingsStoreSubCollectionPlaceholder(this);
             }
-
-            // Create an array with a single placeholder that knows how to expand its
-            // parent.
-            return new[] { new SettingsStoreSubCollectionPlaceholder(this) };
         }
 
-        private void ExpandSubCollection()
+        private async Task ExpandSubCollectionAsync()
         {
             var store = Root.SettingsStore;
+            var path = Path;
 
             // Don't get the count up-front. It's essentially an enumeration which is as expensive
             // as just looping until we get an error.
 
             var subCollections = new List<SettingsStoreSubCollection>();
-
-            var path = Path;
-            for (uint i = 0; ; i++)
+            for (uint index = 0; ; index++)
             {
-                if (ErrorHandler.Failed(store.GetSubCollectionName(path, i, out string subCollectionName)))
+                if (ErrorHandler.Failed(store.GetSubCollectionName(path, index, out string subCollectionName)))
                 {
                     break;
                 }
@@ -199,67 +280,78 @@ namespace SettingsStoreView
                 subCollections.Add(new SettingsStoreSubCollection(this, subCollectionName));
             }
 
-            UpdateProperty(ref _subCollections, subCollections.ToArray(), nameof(SubCollections));
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            UpdateSubCollections(subCollections);
         }
 
-        private SettingsStoreProperty[] PopulateProperties()
+        private void UpdateSubCollections(IEnumerable<SettingsStoreSubCollection> subCollections)
         {
-            Task.Run(() =>
+            // Subtle: If you've just added a new collection on a node that wasn't yet expanded, then the _subCollections list
+            // will contain a seleceted item n item that is selected and we want to keep that way. We should be careful not
+            // to destroy it, otherwise selection will be lost.
+
+            // First remove the placeholder. If it's there, it'll always be the first one.
+            if (_subCollections.Count > 0 && _subCollections[0] is SettingsStoreSubCollectionPlaceholder)
             {
-                var store = Root.SettingsStore;
-                ErrorHandler.ThrowOnFailure(store.GetPropertyCount(Path, out var propertyCount));
-
-                var properties = new SettingsStoreProperty[propertyCount];
-                for (uint i = 0; i < propertyCount; i++)
-                {
-                    properties[i] = CreateProperty(store, i);
-                }
-
-                UpdateProperty(ref _properties, properties, nameof(Properties));
-            }).Forget();
-
-            return Array.Empty<SettingsStoreProperty>();
-        }
-
-        private SettingsStoreProperty CreateProperty(IVsSettingsStore store, uint index)
-        {
-            var path = Path;
-
-            ErrorHandler.ThrowOnFailure(store.GetPropertyName(path, index, out var name));
-            ErrorHandler.ThrowOnFailure(store.GetPropertyType(path, name, out var type));
-            var property = new SettingsStoreProperty(this, name, type);
-
-            switch ((__VsSettingsType)type)
-            {
-                case __VsSettingsType.SettingsType_String:
-                    ErrorHandler.ThrowOnFailure(store.GetString(path, name, out var stringValue));
-                    property.Value = stringValue;
-                    break;
-
-                case __VsSettingsType.SettingsType_Int:
-                    ErrorHandler.ThrowOnFailure(store.GetUnsignedInt(path, name, out var uintValue));
-                    property.Value = uintValue;
-                    break;
-
-                case __VsSettingsType.SettingsType_Int64:
-                    ErrorHandler.ThrowOnFailure(store.GetUnsignedInt64(path, name, out var ulongValue));
-                    property.Value = ulongValue;
-                    break;
-
-                case __VsSettingsType.SettingsType_Binary:
-                    uint[] actualByteLength = { 0 };
-                    ErrorHandler.ThrowOnFailure(store.GetBinary(path, name, 0, null, actualByteLength));
-                    byte[] binaryValue = new byte[actualByteLength[0]];
-                    ErrorHandler.ThrowOnFailure(store.GetBinary(path, name, actualByteLength[0], binaryValue, actualByteLength));
-                    property.Value = binaryValue;
-                    break;
-
-                default:
-                    property.Value = null;
-                    break;
+                _subCollections.RemoveAt(0);
             }
 
-            return property;
+            // If there's still one left, then we have to preserve it.
+            if (_subCollections.Count == 1)
+            {
+                var preservedItemPath = _subCollections[0].Path;
+                bool foundSelected = false;
+
+                foreach (var subCollection in subCollections)
+                {
+                    if (foundSelected)
+                    {
+                        // Add to end of the list.
+                        _subCollections.Add(subCollection);
+                    }
+                    else if (preservedItemPath.Equals(subCollection.Path, StringComparison.Ordinal))
+                    {
+                        foundSelected = true;
+                    }
+                    else
+                    {
+                        // Insert before the preserved item.
+                        _subCollections.Insert(_subCollections.Count - 1, subCollection);
+                    }
+                }
+            }
+            else
+            {
+                _subCollections.AddRange(subCollections);
+            }
+        }
+
+        private async Task PopulatePropertiesAsync()
+        {
+            var store = Root.SettingsStore;
+            var path = Path;
+
+            var properties = new List<SettingsStoreProperty>();
+            for (uint index = 0; ; index++)
+            {
+                if (ErrorHandler.Failed(store.GetPropertyName(path, index, out var name)))
+                {
+                    break;
+
+                }
+
+                if (ErrorHandler.Failed(store.GetPropertyType(path, name, out var type)))
+                {
+                    break;
+                }
+
+                properties.Add(SettingsStoreProperty.CreateInstance(this, name, (__VsSettingsType)type));
+            }
+
+            properties.Sort((p, q) => StringComparer.OrdinalIgnoreCase.Compare(p.Name, q.Name));
+
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            _properties.ReplaceAll(properties);
         }
 
         /// <summary>
@@ -278,13 +370,15 @@ namespace SettingsStoreView
             /// and it's bound to the name), this is our time to replace the placeholder with
             /// real values.
             /// </summary>
-            /// <returns>An empty array, always. The parent's subcolleciton is enumerated
+            /// <returns>An empty enumeration, always. The parent's subcollection is expanded
             /// in the background.</returns>
-            protected override SettingsStoreSubCollection[] CreateSubCollections()
+            protected override IEnumerable<SettingsStoreSubCollection> CreateSubCollections()
             {
-                Task.Run(() => Parent.ExpandSubCollection()).Forget();
+                Task.Run(() => Parent.ExpandSubCollectionAsync()).Forget();
                 return Array.Empty<SettingsStoreSubCollection>();
             }
+
+            protected override bool CanRename => false;
         }
     }
 
@@ -305,6 +399,8 @@ namespace SettingsStoreView
         public __VsEnclosingScopes EnclosingScope { get; }
 
         public IVsSettingsStore SettingsStore { get; }
+
+        protected override bool CanRename => false; 
     }
 
     /// <summary>

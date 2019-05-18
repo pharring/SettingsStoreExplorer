@@ -123,4 +123,8 @@
   <data name="112" xml:space="preserve">
     <value>SettingsStoreViewPackage Visual Studio Extension Detailed Info</value>
   </data>
+  <data name="113" xml:space="preserve">
+    <value>Settings Store View</value>
+    <comment>Keybinding editor name</comment>
+  </data>
 </root>

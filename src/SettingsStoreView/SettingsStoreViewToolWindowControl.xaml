@@ -37,17 +37,18 @@
                 <ColumnDefinition Width="1*"></ColumnDefinition>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TreeView Grid.Column="0" x:Name="treeView" ItemsSource="{Binding Path=Root, Mode=OneWay}">
+            <TreeView Grid.Column="0" x:Name="treeView" ItemsSource="{Binding Root, Mode=OneWay}" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" ContextMenuOpening="TreeView_ContextMenuOpening">
                 <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type my:SettingsStoreSubCollection}" ItemsSource="{Binding Path=SubCollections}">
+                    <HierarchicalDataTemplate DataType="{x:Type my:SettingsStoreSubCollection}" ItemsSource="{Binding SubCollections, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Margin="0,1">
-                            <imaging:CrispImage Moniker="{Binding Mode=OneWay, Converter={StaticResource settingsStoreItemToMonikerConverter}}" Width="16" Height="16" />
-                            <TextBlock Text="{Binding Path=Name, Mode=OneWay}" Margin="4,0" />
+                            <imaging:CrispImage Moniker="{Binding Mode=OneWay, Converter={StaticResource settingsStoreItemToMonikerConverter}}" Width="16" Height="16" Margin="0,1" />
+                            <TextBlock x:Name="label" Text="{Binding Name, Mode=OneWay}" Margin="4,1" />
+                            <TextBox x:Name="editor" Margin="1,0" Padding="1,1" BorderThickness="0" Visibility="Collapsed" />
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.Resources>
             </TreeView>
-            <ListView Grid.Column="1" ItemsSource="{Binding Path=SelectedItem.Properties, ElementName=treeView, Mode=OneWay}">
+            <ListView Grid.Column="1" x:Name="listView" DataContext="{Binding SelectedItem, ElementName=treeView, Mode=OneWay}" SelectionMode="Single" ItemsSource="{Binding Properties, Mode=OneWay}" ContextMenuOpening="ListView_ContextMenuOpening">
                 <ListView.ItemContainerStyle>
                     <Style BasedOn="{StaticResource {x:Type ListViewItem}}" TargetType="ListViewItem">
                         <Setter Property="my:HandleDoubleClickBehavior.Command" Value="{StaticResource modifyPropertyValueCommand}" />
@@ -61,12 +62,21 @@
                         <GridViewColumn Width="28">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <imaging:CrispImage Moniker="{Binding Path=Type, Mode=OneWay, Converter={StaticResource propertyTypeToMonikerConverter}}" Width="16" Height="16" />
+                                    <imaging:CrispImage Moniker="{Binding Type, Mode=OneWay, Converter={StaticResource propertyTypeToMonikerConverter}}" Width="16" Height="16" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Width="140" Header="Name" DisplayMemberBinding="{Binding Name, Mode=OneWay, Converter={StaticResource propertyNameConverter}}" />
-                        <GridViewColumn Width="82" Header="Type" DisplayMemberBinding="{Binding Path=Type, Mode=OneWay, Converter={StaticResource propertyTypeConverter}}" />
+                        <GridViewColumn Width="140" Header="Name">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock x:Name="label" Text="{Binding Name, Mode=OneWay, Converter={StaticResource propertyNameConverter}}" Margin="2,0,0,0" />
+                                        <TextBox x:Name="editor" Text="{Binding Name, Mode=OneWay}" BorderThickness="0" Visibility="Collapsed" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="82" Header="Type" DisplayMemberBinding="{Binding Type, Mode=OneWay, Converter={StaticResource propertyTypeConverter}}" />
                         <GridViewColumn Width="340" Header="Data" DisplayMemberBinding="{Binding Value, Mode=OneWay, Converter={StaticResource propertyValueConverter}}" />
                     </GridView>
                 </ListView.View>
@@ -76,7 +86,7 @@
         </Grid>
         <StatusBar Grid.Row="2">
             <StatusBarItem>
-                <TextBlock Text="{Binding Path=SelectedItem.FullPath, ElementName=treeView, Mode=OneWay}" />
+                <TextBlock Text="{Binding SelectedItem.FullPath, ElementName=treeView, Mode=OneWay}" />
             </StatusBarItem>
         </StatusBar>
     </Grid>

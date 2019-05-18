@@ -58,6 +58,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BinaryToHexDumpConverter.cs" />
+    <Compile Include="DependencyObjectExtensions.cs" />
+    <Compile Include="ItemContainerGeneratorExtensions.cs" />
+    <Compile Include="IVsWritableSettingsStoreExtensions.cs" />
+    <Compile Include="ObservableCollectionExtensions.cs" />
+    <Compile Include="SettingsStoreCommandSet.cs" />
+    <Compile Include="SettingsStoreItemExtensions.cs" />
     <Compile Include="DwordToStringConverter.cs" />
     <Compile Include="EditBinaryDialog.xaml.cs">
       <DependentUpon>EditBinaryDialog.xaml</DependentUpon>
@@ -99,6 +105,7 @@
     <Compile Include="Telemetry.cs" />
     <Compile Include="TextBoxSelectionAdorner.cs" />
     <Compile Include="TextBoxWithSelectionAdorner.cs" />
+    <Compile Include="ControlExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\LICENSE">

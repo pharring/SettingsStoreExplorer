@@ -5,6 +5,7 @@ using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
+using static SettingsStoreView.SettingsStoreCommandSet;
 
 namespace SettingsStoreView
 {
@@ -13,16 +14,6 @@ namespace SettingsStoreView
     /// </summary>
     internal sealed class SettingsStoreViewToolWindowCommand
     {
-        /// <summary>
-        /// Command ID.
-        /// </summary>
-        public const int CommandId = 0x0100;
-
-        /// <summary>
-        /// Command menu group (command set GUID).
-        /// </summary>
-        public static readonly Guid CommandSet = new Guid("9fc9f69d-174d-4876-b28b-dc1e4fac89dc");
-
         /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
@@ -39,8 +30,7 @@ namespace SettingsStoreView
             _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(Execute, menuCommandID);
+            var menuItem = new MenuCommand(Execute, SettingsStoreViewToolWindowCommandId);
             commandService.AddCommand(menuItem);
         }
 

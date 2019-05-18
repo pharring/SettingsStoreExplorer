@@ -11,10 +11,96 @@
         <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}" />
     </Style>
 
-    <Style x:Key="{x:Type TreeViewItem}" TargetType="TreeViewItem">
-        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}" />
-    </Style>
+    <!--
+        The styling for TreeViewItems is copied from PresentationFramework.Aero
+        and then modified to use VS theme brushes instead of system colors.
+    -->
 
+    <!-- Geometry for a right-angled triangle -->
+    <PathGeometry x:Key="rightTriangle">M 0 0 L 6 0 L 0 6 Z</PathGeometry>
+    
+    <!-- Style for the expander part of a TreeViewItem -->
+    <Style x:Key="expanderStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="UIElement.Focusable" Value="False" />
+        <Setter Property="FrameworkElement.Width" Value="16" />
+        <Setter Property="FrameworkElement.Height" Value="16" />
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border Width="16" Height="16" Background="#00FFFFFF" Padding="5,5,5,5">
+                        <Path Name="ExpandPath" Fill="Transparent" Stroke="{DynamicResource {x:Static vsui:TreeViewColors.GlyphBrushKey}}" Data="{StaticResource rightTriangle}">
+                            <Path.RenderTransform>
+                                <RotateTransform Angle="135" CenterX="3" CenterY="3" />
+                            </Path.RenderTransform>
+                        </Path>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ToggleButton.IsChecked" Value="True">
+                            <Setter TargetName="ExpandPath" Property="UIElement.RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="180" CenterX="3" CenterY="3" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="ExpandPath" Value="{DynamicResource {x:Static vsui:TreeViewColors.GlyphBrushKey}}" Property="Shape.Fill" />
+                        </Trigger>
+                        <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter TargetName="ExpandPath" Value="{DynamicResource {x:Static vsui:TreeViewColors.GlyphMouseOverBrushKey}}" Property="Shape.Stroke" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="{x:Type TreeViewItem}" TargetType="TreeViewItem">
+        <Setter Property="Control.Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}" />
+        <Setter Property="Control.Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}" />
+        <!--<Setter Property="Control.HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+        <Setter Property="Control.VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />-->
+        <Setter Property="Control.Padding" Value="1,0,0,0" />
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="19" Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <ToggleButton Name="Expander" Style="{StaticResource expanderStyle}" ClickMode="Press" IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" />
+                        <Border Name="Bd" Grid.Column="1" Background="{TemplateBinding Control.Background}" BorderBrush="{TemplateBinding Control.BorderBrush}" BorderThickness="{TemplateBinding Control.BorderThickness}" Padding="{TemplateBinding Control.Padding}" SnapsToDevicePixels="True">
+                            <ContentPresenter Name="PART_Header" ContentSource="Header" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                        </Border>
+                        <ItemsPresenter Name="ItemsHost" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="TreeViewItem.IsExpanded" Value="False">
+                            <Setter TargetName="ItemsHost" Property="UIElement.Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="ItemsControl.HasItems" Value="False">
+                            <Setter TargetName="Expander" Property="UIElement.Visibility" Value="Hidden" />
+                        </Trigger>
+                        <Trigger Property="TreeViewItem.IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Border.Background" Value="{DynamicResource {x:Static vsui:TreeViewColors.SelectedItemActiveBrushKey}}" />
+                            <Setter Property="Control.Foreground" Value="{DynamicResource {x:Static vsui:TreeViewColors.SelectedItemActiveTextBrushKey}}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="TreeViewItem.IsSelected" Value="True" />
+                                <Condition Property="TreeViewItem.IsSelectionActive" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Border.Background" Value="{DynamicResource {x:Static vsui:TreeViewColors.SelectedItemInactiveBrushKey}}" />
+                            <Setter Property="Control.Foreground" Value="{DynamicResource {x:Static vsui:TreeViewColors.SelectedItemInactiveTextBrushKey}}" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style x:Key="{x:Type ListView}" TargetType="ListView">
         <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}" />
     </Style>

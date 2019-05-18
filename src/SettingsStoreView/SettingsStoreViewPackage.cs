@@ -31,6 +31,7 @@ namespace SettingsStoreView
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(SettingsStoreViewToolWindow))]
+    [ProvideKeyBindingTable(SettingsStoreViewToolWindow.ToolWindowGuidString, 113)]
     public sealed class SettingsStoreViewPackage : AsyncPackage
     {
         /// <summary>
