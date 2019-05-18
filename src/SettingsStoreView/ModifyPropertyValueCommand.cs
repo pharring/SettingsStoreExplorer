@@ -28,19 +28,13 @@ namespace SettingsStoreView
                 return;
             }
 
-            if (!(ServiceProvider.GlobalProvider.GetService(typeof(SVsSettingsManager)) is IVsSettingsManager settingsManager))
-            {
-                return;
-            }
-
-            if (ErrorHandler.Failed(settingsManager.GetWritableSettingsStore((uint)property.Root.EnclosingScope, out var writableStore)))
+            if (!property.TryGetWritableSettingsStore(out var writableStore))
             {
                 // Cannot get a writable setting store. The usual case is trying to modify a value under Config
                 // TODO: Show a message? Run as admin?
                 Telemetry.Client.TrackEvent("No writable store");
                 return;
             }
-
 
             ErrorHandler.ThrowOnFailure(writableStore.PropertyExists(property.CollectionPath, property.Name, out var exists));
             if (exists == 0)
@@ -51,9 +45,15 @@ namespace SettingsStoreView
                 return;
             }
 
+            ShowModifyPropertyDialog(property, writableStore);
+        }
+
+        public static void ShowModifyPropertyDialog(SettingsStoreProperty property, IVsWritableSettingsStore writableStore)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
             switch (property.Type)
             {
-                case  __VsSettingsType.SettingsType_String:
+                case __VsSettingsType.SettingsType_String:
                     {
                         Telemetry.Client.TrackPageView(nameof(EditStringDialog));
                         var dialog = new EditStringDialog(property);

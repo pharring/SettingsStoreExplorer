@@ -25,7 +25,7 @@ namespace SettingsStoreView
                     return VsKnownMonikers.Binary;
 
                 default:
-                    return base.Convert(value, parameter, culture);
+                    return default;
             }
         }
     }
