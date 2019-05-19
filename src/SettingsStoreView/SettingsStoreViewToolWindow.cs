@@ -25,10 +25,10 @@ namespace SettingsStoreView
     /// implementation of the IVsUIElementPane interface.
     /// </para>
     /// </remarks>
-    [Guid(ToolWindowGuidString)]
+    [Guid(c_toolWindowGuidString)]
     public class SettingsStoreViewToolWindow : ToolWindowPane
     {
-        internal const string ToolWindowGuidString = "f24ec500-28a5-4f29-82da-4e7d307f9d63";
+        internal const string c_toolWindowGuidString = "f24ec500-28a5-4f29-82da-4e7d307f9d63";
 
         private static readonly char[] s_invalidCollectionNameChars = new[] { '\\' };
         private readonly MenuCommand _addNewSubCollectionCommand;

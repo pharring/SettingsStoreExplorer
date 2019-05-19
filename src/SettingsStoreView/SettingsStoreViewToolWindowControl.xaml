@@ -37,7 +37,7 @@
                 <ColumnDefinition Width="1*"></ColumnDefinition>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TreeView Grid.Column="0" x:Name="treeView" ItemsSource="{Binding Root, Mode=OneWay}" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" ContextMenuOpening="TreeView_ContextMenuOpening">
+            <TreeView Grid.Column="0" x:Name="treeView" ItemsSource="{Binding Root, Mode=OneWay}" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" ContextMenuOpening="TreeView_ContextMenuOpening" KeyDown="TreeView_KeyDown" TextInput="TreeView_TextInput">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type my:SettingsStoreSubCollection}" ItemsSource="{Binding SubCollections, Mode=OneWay}">
                         <StackPanel Orientation="Horizontal" Margin="0,1">
