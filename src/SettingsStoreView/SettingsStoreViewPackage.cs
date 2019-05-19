@@ -27,17 +27,17 @@ namespace SettingsStoreView
     /// </para>
     /// </remarks>
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [Guid(PackageGuidString)]
+    [Guid(c_packageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(SettingsStoreViewToolWindow))]
-    [ProvideKeyBindingTable(SettingsStoreViewToolWindow.ToolWindowGuidString, 113)]
+    [ProvideKeyBindingTable(SettingsStoreViewToolWindow.c_toolWindowGuidString, 113)]
     public sealed class SettingsStoreViewPackage : AsyncPackage
     {
         /// <summary>
         /// SettingsStoreViewPackage GUID string.
         /// </summary>
-        public const string PackageGuidString = "e8762000-5824-4411-bc19-417b39b309f5";
+        private const string c_packageGuidString = "e8762000-5824-4411-bc19-417b39b309f5";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsStoreViewPackage"/> class.

@@ -167,6 +167,12 @@ namespace SettingsStoreView
         /// </summary>
         /// <param name="propertyName">The name of the property that has changed.</param>
         private void InvokePropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        /// <summary>
+        /// Overriding ToString allows text-search matching.
+        /// </summary>
+        /// <returns>The name.</returns>
+        public override string ToString() => Name;
     }
 
     /// <summary>

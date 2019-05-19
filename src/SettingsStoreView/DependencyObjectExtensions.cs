@@ -15,6 +15,17 @@ namespace SettingsStoreView
         /// <returns>The first ancestor of the given type or null if none was found.</returns>
         public static T FindVisualAncestor<T>(this DependencyObject dependencyObject) where T : DependencyObject
         {
+            switch (dependencyObject)
+            {
+                case Visual visual:
+                    dependencyObject = VisualTreeHelper.GetParent(visual);
+                    break;
+
+                default:
+                    dependencyObject = LogicalTreeHelper.GetParent(dependencyObject);
+                    break;
+            }
+
             while (true)
             {
                 switch (dependencyObject)

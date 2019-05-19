@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Paul Harrington.  All Rights Reserved.  Licensed under the MIT License.  See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,6 +19,8 @@ namespace SettingsStoreView
     public partial class SettingsStoreViewToolWindowControl : UserControl
     {
         private readonly IServiceProvider _serviceProvider;
+        private DateTime _textSearchPrefixExpirationTime = DateTime.MinValue;
+        private string _searchText = "";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsStoreViewToolWindowControl"/> class.
@@ -149,14 +152,9 @@ namespace SettingsStoreView
                         // TreeViewItem itself, because that includes the itemscontrol of any expanded items. Instead, we want
                         // just the label (TextBock) part of the header.
                         var label = treeViewItem.FindVisualDescendent<TextBlock>();
-                        if (label != null)
-                        {
-                            position = label.PointToScreen(new Point(label.ActualWidth / 2, label.ActualHeight / 2));
-                        }
-                        else
-                        {
-                            position = treeViewItem.PointToScreen(new Point(0, 0));
-                        }
+                        position = label != null
+                            ? label.PointToScreen(new Point(label.ActualWidth / 2, label.ActualHeight / 2))
+                            : treeViewItem.PointToScreen(new Point(0, 0));
                     }
                     else
                     {
@@ -189,6 +187,160 @@ namespace SettingsStoreView
             }
 
             e.Handled = true;
+        }
+
+        private void TreeView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Back)
+            {
+                if (_searchText.Length > 0)
+                {
+                    _searchText = _searchText.Substring(0, _searchText.Length - 1);
+                }
+
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// Search the tree view items for the typed text.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">Event args.</param>
+        private void TreeView_TextInput(object sender, TextCompositionEventArgs e)
+        {
+            var utcNow = DateTime.UtcNow;
+            if (utcNow > _textSearchPrefixExpirationTime)
+            {
+                _searchText = "";
+            }
+
+            _textSearchPrefixExpirationTime = utcNow + TimeSpan.FromSeconds(1);
+
+            var treeViewItem = treeView.ItemContainerGenerator.ContainerFromItemRecursive<TreeViewItem>(treeView.SelectedItem);
+
+            var foundItem = FindMatchingItem(treeViewItem, ref _searchText, e.Text);
+            if (foundItem != null)
+            {
+                foundItem.IsSelected = true;
+                foundItem.BringIntoView();
+            }
+
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Search for an item that matches the prefix plus the newly-typed text.
+        /// </summary>
+        /// <param name="startingItem">The starting item.</param>
+        /// <param name="prefix">The current prefix. On exit, this will be
+        /// updated with the new prefix.</param>
+        /// <param name="newText">The newly-typed text.</param>
+        /// <returns>The item that matches the new prefix, or null if no match
+        /// was found</returns>
+        private static TreeViewItem FindMatchingItem(TreeViewItem startingItem, ref string prefix, string newText)
+        {
+            var newPrefix = prefix + newText;
+
+            // Check the current item, but only if more than one char has been typed.
+            if (newPrefix.Length > 1 && startingItem.Header.ToString().StartsWith(newPrefix, StringComparison.CurrentCultureIgnoreCase))
+            {
+                prefix = newPrefix;
+                return startingItem;
+            }
+
+            // Always advance forward.
+            startingItem = NextVisibleTreeViewItem(startingItem);
+
+            // Search for the entire prefix.
+            var foundItem = Search(startingItem, newPrefix);
+            if (foundItem != null)
+            {
+                prefix = newPrefix;
+                return foundItem;
+            }
+
+            // Try searching for just the newly-typed char
+            foundItem = Search(startingItem, newText);
+            if (foundItem != null)
+            {
+                prefix = newText;
+                return foundItem;
+            }
+
+            prefix = newPrefix;
+            return null;
+        }
+
+        /// <summary>
+        /// Search forward from the given starting item until we find a prefix
+        /// match.
+        /// </summary>
+        /// <param name="startingItem">The starting item.</param>
+        /// <param name="prefix">The prefix to match.</param>
+        /// <returns>The found item or null if no items match.</returns>
+        private static TreeViewItem Search(TreeViewItem startingItem, string prefix)
+        {
+            var treeViewItem = startingItem;
+            do
+            {
+                if (treeViewItem.Header.ToString().StartsWith(prefix, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return treeViewItem;
+                }
+
+                treeViewItem = NextVisibleTreeViewItem(treeViewItem);
+            }
+            while (treeViewItem != startingItem);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Computes the next visible TreeViewItem in order from top to bottom.
+        /// Wraps around when it gets to the bottom-most item.
+        /// </summary>
+        /// <param name="treeViewItem">The starting item.</param>
+        /// <returns>The next item in the traversal.</returns>
+        private static TreeViewItem NextVisibleTreeViewItem(TreeViewItem treeViewItem)
+        {
+            // First child
+            if (treeViewItem.IsExpanded && treeViewItem.HasItems && treeViewItem.Items.Count > 0)
+            {
+                return treeViewItem.ItemContainerGenerator.ContainerFromIndex(0) as TreeViewItem;
+            }
+
+            while (true)
+            {
+                var parent = treeViewItem.FindVisualAncestor<TreeViewItem>();
+                ItemContainerGenerator itemContainerGenerator;
+                if (parent == null)
+                {
+                    var treeView = treeViewItem.FindVisualAncestor<TreeView>();
+                    itemContainerGenerator = treeView.ItemContainerGenerator;
+                }
+                else
+                {
+                    itemContainerGenerator = parent.ItemContainerGenerator;
+                }
+
+                var childIndex = itemContainerGenerator.IndexFromContainer(treeViewItem);
+                if (childIndex >= 0 && (childIndex + 1) < itemContainerGenerator.Items.Count)
+                {
+                    // Next sibling
+                    return itemContainerGenerator.ContainerFromIndex(childIndex + 1) as TreeViewItem;
+                }
+
+                // No more siblings
+                if (parent == null)
+                {
+                    // Reached the end. Start at the top again.
+                    return itemContainerGenerator.ContainerFromIndex(0) as TreeViewItem;
+                }
+
+                // Go to the parent and find its next sibling.
+                treeViewItem = parent;
+            }
         }
     }
 }
