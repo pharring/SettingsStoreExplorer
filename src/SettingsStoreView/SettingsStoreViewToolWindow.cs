@@ -39,6 +39,7 @@ namespace SettingsStoreView
         private readonly MenuCommand _renameCommand;
         private readonly MenuCommand _deleteCommand;
         private readonly MenuCommand _modifyCommand;
+        private readonly MenuCommand _refreshCommand;
         private SettingsStoreViewToolWindowControl _control;
 
         /// <summary>
@@ -57,6 +58,7 @@ namespace SettingsStoreView
             _renameCommand = new MenuCommand(RenameExecuted, RenameCommandId);
             _deleteCommand = new MenuCommand(DeleteExecuted, DeleteCommandId);
             _modifyCommand = new MenuCommand(ModifyExecuted, ModifyCommandId);
+            _refreshCommand = new MenuCommand(RefreshExecuted, RefreshCommandId);
         }
 
         protected override void Initialize()
@@ -72,23 +74,23 @@ namespace SettingsStoreView
             commandService.AddCommand(_renameCommand);
             commandService.AddCommand(_deleteCommand);
             commandService.AddCommand(_modifyCommand);
+            commandService.AddCommand(_refreshCommand);
 
             Content = _control = new SettingsStoreViewToolWindowControl(this);
 
             _control.treeView.SelectedItemChanged += TreeView_SelectedItemChanged;
             _control.listView.SelectionChanged += ListView_SelectionChanged;
 
-            KnownUIContexts.ShellInitializedContext.WhenActivated(() =>
-            {
-                // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
-                // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
-                // the object returned by the Content property.
-                ThreadHelper.ThrowIfNotOnUIThread();
-                var settingsManager = GetService(typeof(SVsSettingsManager)) as IVsSettingsManager;
-                _control.InitializeViewModel(settingsManager);
+            KnownUIContexts.ShellInitializedContext.WhenActivated(InitializeViewModel);
+        }
 
-                Telemetry.Client.TrackPageView(nameof(SettingsStoreViewToolWindow));
-            });
+        private void InitializeViewModel()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var settingsManager = GetService(typeof(SVsSettingsManager)) as IVsSettingsManager;
+            _control.InitializeViewModel(settingsManager);
+
+            Telemetry.Client.TrackPageView(nameof(SettingsStoreViewToolWindow));
         }
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -401,6 +403,21 @@ namespace SettingsStoreView
             }
 
             ModifyPropertyValueCommand.ShowModifyPropertyDialog(property, settingsStore);
+        }
+
+        private void RefreshExecuted(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var fullPath = GetSelectedSubCollection().FullPath;
+
+            InitializeViewModel();
+
+            var model = _control.DataContext as SettingsStoreViewModel;
+            model.RequestExpansion(fullPath, subCollection =>
+            {
+                _control.SetTreeViewSelection(subCollection);
+            });
         }
     }
 }

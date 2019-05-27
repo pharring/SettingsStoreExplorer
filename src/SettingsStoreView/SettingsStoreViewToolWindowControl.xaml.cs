@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Paul Harrington.  All Rights Reserved.  Licensed under the MIT License.  See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Windows;
 using System.Windows.Controls;
@@ -77,16 +78,22 @@ namespace SettingsStoreView
 
             if (treeViewItem == null)
             {
-                // Try expanding the parent
-                var parentCollection = subCollection.Parent;
-                if (parentCollection != null)
+                // Try expanding the path to root.
+                var parents = new Stack<SettingsStoreSubCollection>();
+                for (var parentCollection = subCollection.Parent; parentCollection != null; parentCollection = parentCollection.Parent)
                 {
+                    parents.Push(parentCollection);
+                }
+
+                while (parents.Count != 0)
+                {
+                    var parentCollection = parents.Pop();
                     var parentTreeViewItem = treeView.ItemContainerGenerator.ContainerFromItemRecursive<TreeViewItem>(parentCollection);
                     if (parentTreeViewItem != null && !parentTreeViewItem.IsExpanded)
                     {
                         parentTreeViewItem.IsExpanded = true;
 
-                        // Try again
+                        // Force a re-layout and try again
 #pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
                         Dispatcher.Invoke(() => SetTreeViewSelection(subCollection), DispatcherPriority.Render);
 #pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
@@ -94,6 +101,9 @@ namespace SettingsStoreView
                         return;
                     }
                 }
+
+                // Give up.
+                return;
             }
 
             if (treeViewItem != null)
