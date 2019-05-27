@@ -46,6 +46,11 @@
         <Parent guid="guidSettingsStoreViewPackageCmdSet" id="TreeViewItemContextMenu" />
       </Group>
 
+      <!-- Group for "Refresh" command in the tree view (collection) context menu -->
+      <Group guid="guidSettingsStoreViewPackageCmdSet" id="RefreshGroup" priority="0x120">
+        <Parent guid="guidSettingsStoreViewPackageCmdSet" id="TreeViewItemContextMenu" />
+      </Group>
+
       <!-- Group for "Modify" command in the list view (property) context menu -->
       <Group guid="guidSettingsStoreViewPackageCmdSet" id="ModifyGroup" priority="0x100">
         <Parent guid="guidSettingsStoreViewPackageCmdSet" id="ListViewItemContextMenu" />
@@ -138,11 +143,19 @@
         </Strings>
       </Button>
 
-      <!-- Modify (context menu command) -->
+      <!-- Modify command -->
       <Button guid="guidSettingsStoreViewPackageCmdSet" id="ModifyCommandId" priority="0x0160" type="Button">
         <Parent guid="guidSettingsStoreViewPackageCmdSet" id="AllCommandsGroup"/>
         <Strings>
           <ButtonText>&amp;Modify...</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Refresh command -->
+      <Button guid="guidSettingsStoreViewPackageCmdSet" id="RefreshCommandId" priority="0x0170" type="Button">
+        <Parent guid="guidSettingsStoreViewPackageCmdSet" id="AllCommandsGroup"/>
+        <Strings>
+          <ButtonText>Refresh</ButtonText>
         </Strings>
       </Button>
 
@@ -230,6 +243,10 @@
       <Parent guid="guidSettingsStoreViewPackageCmdSet" id="RenameDeleteGroup" />
     </CommandPlacement>
 
+    <CommandPlacement guid="guidSettingsStoreViewPackageCmdSet" id="RefreshCommandId" priority="0x100">
+      <Parent guid="guidSettingsStoreViewPackageCmdSet" id="RefreshGroup" />
+    </CommandPlacement>
+
     <CommandPlacement guid="guidSettingsStoreViewPackageCmdSet" id="NewFlyoutGroup" priority="0x100">
       <Parent guid="guidSettingsStoreViewPackageCmdSet" id="ListViewContextMenu" />
     </CommandPlacement>
@@ -244,6 +261,7 @@
   <KeyBindings>
     <KeyBinding guid="guidSettingsStoreViewPackageCmdSet" id="RenameCommandId" key1="VK_F2" editor="guidSettingsStoreViewToolWindow" />
     <KeyBinding guid="guidSettingsStoreViewPackageCmdSet" id="DeleteCommandId" key1="VK_DELETE" editor="guidSettingsStoreViewToolWindow" />
+    <KeyBinding guid="guidSettingsStoreViewPackageCmdSet" id="RefreshCommandId" key1="VK_F5" editor="guidSettingsStoreViewToolWindow" />
   </KeyBindings>
 
   <Symbols>
@@ -266,6 +284,7 @@
       <IDSymbol name="RenameCommandId" value="0x0106" />
       <IDSymbol name="DeleteCommandId" value="0x0107" />
       <IDSymbol name="ModifyCommandId" value="0x0108" />
+      <IDSymbol name="RefreshCommandId" value="0x0109" />
 
       <!-- Group IDs -->
       <IDSymbol name="AllCommandsGroup" value="0x0200" />
@@ -275,6 +294,7 @@
       <IDSymbol name="NewFlyoutGroup" value="0x0204" />
       <IDSymbol name="RenameDeleteGroup" value="0x0205" />
       <IDSymbol name="ModifyGroup" value="0x0206" />
+      <IDSymbol name="RefreshGroup" value="0x0207" />
 
       <!-- Menu IDs -->
       <IDSymbol name="SubCollectionNewContextMenu" value="0x300" />

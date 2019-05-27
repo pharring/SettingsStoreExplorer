@@ -293,8 +293,8 @@ namespace SettingsStoreView
         private void UpdateSubCollections(IEnumerable<SettingsStoreSubCollection> subCollections)
         {
             // Subtle: If you've just added a new collection on a node that wasn't yet expanded, then the _subCollections list
-            // will contain a seleceted item n item that is selected and we want to keep that way. We should be careful not
-            // to destroy it, otherwise selection will be lost.
+            // will contain an item that is selected and we want to keep that way. We should be careful not to destroy it, otherwise
+            // selection will be lost.
 
             // First remove the placeholder. If it's there, it'll always be the first one.
             if (_subCollections.Count > 0 && _subCollections[0] is SettingsStoreSubCollectionPlaceholder)
