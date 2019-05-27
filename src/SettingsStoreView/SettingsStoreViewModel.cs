@@ -5,7 +5,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -242,14 +245,17 @@ namespace SettingsStoreView
         {
         }
 
-        public ObservableCollection<SettingsStoreSubCollection> SubCollections => _subCollections ?? (_subCollections = new ObservableCollection<SettingsStoreSubCollection>(CreateSubCollections()));
+        public ObservableCollection<SettingsStoreSubCollection> SubCollections => LazyInitializer.EnsureInitialized(ref _subCollections, SubCollectionsValueFactory);
 
-        public ObservableCollection<SettingsStoreProperty> Properties => _properties ?? (_properties = new ObservableCollection<SettingsStoreProperty>(InitializeProperties()));
+        private ObservableCollection<SettingsStoreSubCollection> SubCollectionsValueFactory()
+            => new ObservableCollection<SettingsStoreSubCollection>(CreateSubCollections());
 
-        private IEnumerable<SettingsStoreProperty> InitializeProperties()
+        public ObservableCollection<SettingsStoreProperty> Properties => LazyInitializer.EnsureInitialized(ref _properties, PropertiesValueFactory);
+
+        private ObservableCollection<SettingsStoreProperty> PropertiesValueFactory()
         {
             Task.Run(() => PopulatePropertiesAsync()).Forget();
-            return Array.Empty<SettingsStoreProperty>();
+            return new ObservableCollection<SettingsStoreProperty>();
         }
 
         protected virtual IEnumerable<SettingsStoreSubCollection> CreateSubCollections()
@@ -267,7 +273,33 @@ namespace SettingsStoreView
             }
         }
 
-        private async Task ExpandSubCollectionAsync()
+        /// <summary>
+        /// Populate the SubCollections collection, replacing any placeholder item.
+        /// </summary>
+        /// <returns>The new collection.</returns>
+        internal async Task<IEnumerable<SettingsStoreSubCollection>> ExpandSubCollectionsAsync()
+        {
+            var subCollections = GenerateSubCollections();
+
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            // The Interlocked.CompareExchange handles the case when this is called during a refresh.
+            // See ExpandCollectionAsync in SettingsStoreViewModel.
+            if (_subCollections != null ||
+                Interlocked.CompareExchange(ref _subCollections, new ObservableCollection<SettingsStoreSubCollection>(subCollections), null) != null)
+            {
+                // Replace placeholder.
+                UpdateSubCollections(subCollections);
+            }
+
+            return subCollections;
+        }
+
+        /// <summary>
+        /// Enumerate the sub collections of this collection and create new view models for each.
+        /// </summary>
+        /// <returns>The list of sub collections.</returns>
+        private List<SettingsStoreSubCollection> GenerateSubCollections()
         {
             var store = Root.SettingsStore;
             var path = Path;
@@ -286,15 +318,20 @@ namespace SettingsStoreView
                 subCollections.Add(new SettingsStoreSubCollection(this, subCollectionName));
             }
 
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            UpdateSubCollections(subCollections);
+            return subCollections;
         }
 
+        /// <summary>
+        /// Refresh the SubCollections observable collection.
+        /// </summary>
+        /// <param name="subCollections">The new list of sub collections.</param>
         private void UpdateSubCollections(IEnumerable<SettingsStoreSubCollection> subCollections)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             // Subtle: If you've just added a new collection on a node that wasn't yet expanded, then the _subCollections list
-            // will contain a seleceted item n item that is selected and we want to keep that way. We should be careful not
-            // to destroy it, otherwise selection will be lost.
+            // will contain an item that is selected and we want to keep that way. We should be careful not to destroy it, otherwise
+            // selection will be lost.
 
             // First remove the placeholder. If it's there, it'll always be the first one.
             if (_subCollections.Count > 0 && _subCollections[0] is SettingsStoreSubCollectionPlaceholder)
@@ -380,7 +417,7 @@ namespace SettingsStoreView
             /// in the background.</returns>
             protected override IEnumerable<SettingsStoreSubCollection> CreateSubCollections()
             {
-                Task.Run(() => Parent.ExpandSubCollectionAsync()).Forget();
+                Task.Run(() => Parent.ExpandSubCollectionsAsync()).Forget();
                 return Array.Empty<SettingsStoreSubCollection>();
             }
 
@@ -414,14 +451,89 @@ namespace SettingsStoreView
     /// </summary>
     public sealed class SettingsStoreViewModel
     {
-        public SettingsStoreSubCollection[] Root { get; set; }
+        public SettingsStoreSubCollection[] Roots { get; set; }
 
         public SettingsStoreViewModel(IVsSettingsManager settingsManager)
         {
-            Root = new SettingsStoreSubCollection[] {
+            Roots = new SettingsStoreSubCollection[] {
                 new RootSettingsStore(settingsManager, __VsEnclosingScopes.EnclosingScopes_Configuration, "Config"),
                 new RootSettingsStore(settingsManager, __VsEnclosingScopes.EnclosingScopes_UserSettings, "User")
             };
+        }
+
+        /// <summary>
+        /// Force the expansion of collections along the given full path from root.
+        /// Expansion is asynchronous. When it's finished, the <paramref name="onExpanded"/> callback is called on the UI thread.
+        /// </summary>
+        /// <param name="fullPath">The full path to expand.</param>
+        /// <param name="onExpanded">A callback that is called when expansion is complete.</param>
+        public void RequestExpansion(string fullPath, Action<SettingsStoreSubCollection> onExpanded)
+            => Task.Run(() => ExpandCollectionAsync(fullPath, onExpanded)).Forget();
+
+        private async Task ExpandCollectionAsync(string fullPath, Action<SettingsStoreSubCollection> onExpanded)
+        {
+            var index = 0;
+            var rootName = NextPart(fullPath, ref index);
+
+            SettingsStoreSubCollection subCollection = null;
+
+            // Find the root
+            foreach (var root in Roots)
+            {
+                if (root.Name == rootName)
+                {
+                    subCollection = root;
+                    break;
+                }
+            }
+
+            if (subCollection != null)
+            {
+                // Expand down the tree.
+                while (index >= 0)
+                {
+                    // ExpandSubCollectionsAsync switches to the UI thread, but we want to continue on the worker thread.
+                    // There is an implicit "ConfigureAwait(true)" on the awaiter which does that.
+                    var subCollections = await subCollection.ExpandSubCollectionsAsync();
+                    ThreadHelper.ThrowIfOnUIThread();
+
+                    var subCollectionName = NextPart(fullPath, ref index);
+                    var childSubCollection = subCollections.FirstOrDefault(sub => sub.Name == subCollectionName);
+                    if (childSubCollection == null)
+                    {
+                        break;
+                    }
+
+                    subCollection = childSubCollection;
+                }
+            }
+
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            onExpanded(subCollection);
+        }
+
+        /// <summary>
+        /// Extract the next part of the path starting at the given index.
+        /// </summary>
+        /// <param name="path">The full path.</param>
+        /// <param name="index">The starting index. Will be updated on exit. If less than zero, then there are no more parts.</param>
+        /// <returns>The next part of the path.</returns>
+        private static string NextPart(string path, ref int index)
+        {
+            var separatorIndex = path.IndexOf('\\', index);
+            if (separatorIndex < 0)
+            {
+                // Last segment
+                path = path.Substring(index);
+                index = separatorIndex;
+            }
+            else
+            {
+                path = path.Substring(index, separatorIndex - index);
+                index = separatorIndex + 1;
+            }
+
+            return path;
         }
     }
 }

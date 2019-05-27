@@ -24,6 +24,7 @@ namespace SettingsStoreView
         public static readonly CommandID RenameCommandId = MakeCommandID(0x0106);
         public static readonly CommandID DeleteCommandId = MakeCommandID(0x0107);
         public static readonly CommandID ModifyCommandId = MakeCommandID(0x0108);
+        public static readonly CommandID RefreshCommandId = MakeCommandID(0x0109);
 
         // Menus
         public static readonly CommandID SubCollectionNewContextMenu = MakeCommandID(0x300);
