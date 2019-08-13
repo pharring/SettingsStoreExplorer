@@ -2,13 +2,16 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
-             xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0">
-
+             xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+             xmlns:theming="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging">
+    
     <!-- Apply Visual Studio Theme colors to common controls -->
     
     <Style x:Key="{x:Type TreeView}"  TargetType="TreeView">
         <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}" />
         <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}" />
+        <!-- For accurate CrispImage coloring -->
+        <Setter Property="theming:ImageThemingUtilities.ImageBackgroundColor" Value="{DynamicResource {x:Static vsshell:VsColors.ToolWindowBackgroundKey}}" />
     </Style>
 
     <!--
@@ -103,6 +106,8 @@
     
     <Style x:Key="{x:Type ListView}" TargetType="ListView">
         <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowBackgroundKey}}" />
+        <!-- For accurate CrispImage coloring -->
+        <Setter Property="theming:ImageThemingUtilities.ImageBackgroundColor" Value="{DynamicResource {x:Static vsshell:VsColors.ToolWindowBackgroundKey}}" />
     </Style>
 
     <Style x:Key="{x:Type ListViewItem}" TargetType="ListViewItem">
