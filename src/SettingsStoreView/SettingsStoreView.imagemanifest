@@ -19,6 +19,7 @@
       <Source Uri="$(Resources)/SettingsStoreViewToolWindowCommand.png">
         <Size Value="16" />
       </Source>
+      <Source Uri="$(Resources)/SettingsStoreViewToolWindowCommand.xaml" />
     </Image>
   </Images>
   <ImageLists />

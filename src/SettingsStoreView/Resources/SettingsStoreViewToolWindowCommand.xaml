@@ -1,0 +1,31 @@
+﻿<Viewbox Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <Rectangle Width="16" Height="16">
+        <Rectangle.Fill>
+            <DrawingBrush>
+                <DrawingBrush.Drawing>
+                    <DrawingGroup>
+                        <DrawingGroup.Children>
+                            <GeometryDrawing Geometry="M0,3 h9 v4 h4 v9 h-13 M9,3.5 l3.5,-3.5 l3.5,3.5 l-3.5,3.5">
+                                <GeometryDrawing.Brush>
+                                    <LinearGradientBrush EndPoint="1,0" StartPoint="0,1">
+                                        <GradientStop Color="#FF0088CC" Offset="0"/>
+                                        <GradientStop Color="#FF006699" Offset="0.6"/>
+                                    </LinearGradientBrush>
+                                </GeometryDrawing.Brush>
+                            </GeometryDrawing>
+                            <GeometryDrawing Brush="#FF52D3FF" Geometry="M1,4 h3 v3 h-3" />
+                            <GeometryDrawing Brush="#FF00A3D9" Geometry="M5,4 h3 v3 h-3" />
+                            <GeometryDrawing Brush="#FF00A3D9" Geometry="M10.2,3.5 l2.3,-2.3 l2.3,2.3 l-2.3,2.3" />
+                            <GeometryDrawing Brush="#FF52D3FF" Geometry="M1,8 h3 v3 h-3" />
+                            <GeometryDrawing Brush="#FF00A3D9" Geometry="M5,8 h3 v3 h-3" />
+                            <GeometryDrawing Brush="#FF00A3D9" Geometry="M9,8 h3 v3 h-3" />
+                            <GeometryDrawing Brush="#FF52D3FF" Geometry="M1,12 h3 v3 h-3" />
+                            <GeometryDrawing Brush="#FF52D3FF" Geometry="M5,12 h3 v3 h-3" />
+                            <GeometryDrawing Brush="#FF52D3FF" Geometry="M9,12 h3 v3 h-3" />
+                        </DrawingGroup.Children>
+                    </DrawingGroup>
+                </DrawingBrush.Drawing>
+            </DrawingBrush>
+        </Rectangle.Fill>
+    </Rectangle>
+</Viewbox>
