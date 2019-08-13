@@ -19,10 +19,10 @@ namespace SettingsStoreView
                     return VsKnownMonikers.Numeric;
 
                 case __VsSettingsType.SettingsType_String:
-                    return VsKnownMonikers.String;
+                    return VsKnownMonikers.StringRegistryValue;
 
                 case __VsSettingsType.SettingsType_Binary:
-                    return VsKnownMonikers.Binary;
+                    return VsKnownMonikers.BinaryRegistryValue;
 
                 default:
                     return default;

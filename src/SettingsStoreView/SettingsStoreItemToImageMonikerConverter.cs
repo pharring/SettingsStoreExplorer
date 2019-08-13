@@ -21,7 +21,7 @@ namespace SettingsStoreView
                             return VsKnownMonikers.User;
 
                         default:
-                            return KnownMonikers.SettingsStoreViewToolWindowCommand;
+                            return VsKnownMonikers.Registry;
                     }
 
                 case SettingsStoreSubCollection _:
