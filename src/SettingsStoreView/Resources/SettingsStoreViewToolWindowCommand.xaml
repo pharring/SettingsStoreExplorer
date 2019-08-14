@@ -1,5 +1,5 @@
 ﻿<Canvas Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-    <Path Data="M0,3 h9 v4 h4 v9 h-13 M9,3.5 l3.5,-3.5 l3.5,3.5 l-3.5,3.5">
+    <Path Data="M0,3 h9 v4 h4 v9 h-13">
         <Path.Fill>
             <LinearGradientBrush EndPoint="1,0" StartPoint="0,1">
                 <GradientStop Color="#FF00AAEE" Offset="0"/>
@@ -7,13 +7,17 @@
             </LinearGradientBrush>
         </Path.Fill>
     </Path>
-    <Path Fill="#FF52D3FF" Data="M1,4 h3 v3 h-3"/>
-    <Path Fill="#FF00A3D9" Data="M5,4 h3 v3 h-3"/>
-    <Path Fill="#FF00A3D9" Data="M10.2,3.5 l2.3,-2.3 l2.3,2.3 l-2.3,2.3"/>
-    <Path Fill="#FF52D3FF" Data="M1,8 h3 v3 h-3"/>
-    <Path Fill="#FF00A3D9" Data="M5,8 h3 v3 h-3"/>
-    <Path Fill="#FF00A3D9" Data="M9,8 h3 v3 h-3"/>
-    <Path Fill="#FF52D3FF" Data="M1,12 h3 v3 h-3"/>
-    <Path Fill="#FF52D3FF" Data="M5,12 h3 v3 h-3"/>
-    <Path Fill="#FF52D3FF" Data="M9,12 h3 v3 h-3"/>
+    <Rectangle Fill="#FF52D3FF" Canvas.Left="1" Canvas.Top="4" Width="3" Height="3" />
+    <Rectangle Fill="#FF00A3D9" Canvas.Left="5" Canvas.Top="4" Width="3" Height="3" />
+    <Rectangle Fill="#FF00A3D9" Canvas.Left="10" Stroke="#FF006699" StrokeThickness="1" Canvas.Top="1" Width="5" Height="5" RenderTransformOrigin="0.5,0.5">
+        <Rectangle.RenderTransform>
+            <RotateTransform Angle="45"/>
+        </Rectangle.RenderTransform>
+    </Rectangle>
+    <Rectangle Fill="#FF52D3FF" Canvas.Left="1" Canvas.Top="8" Width="3" Height="3" />
+    <Rectangle Fill="#FF00A3D9" Canvas.Left="5" Canvas.Top="8" Width="3" Height="3" />
+    <Rectangle Fill="#FF00A3D9" Canvas.Left="9" Canvas.Top="8" Width="3" Height="3" />
+    <Rectangle Fill="#FF52D3FF" Canvas.Left="1" Canvas.Top="12" Width="3" Height="3" />
+    <Rectangle Fill="#FF52D3FF" Canvas.Left="5" Canvas.Top="12" Width="3" Height="3" />
+    <Rectangle Fill="#FF52D3FF" Canvas.Left="9" Canvas.Top="12" Width="3" Height="3" />
 </Canvas>
