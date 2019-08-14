@@ -26,16 +26,15 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0">
-                <!-- Row 0 is unused for now, but we'll probably put a search control here eventually -->
-            </RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <!-- Row 0 is unused for now, but we'll probably put a search control here eventually -->
+            <RowDefinition Height="0"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"></ColumnDefinition>
-                <ColumnDefinition Width="2*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
             <TreeView Grid.Column="0" x:Name="treeView" ItemsSource="{Binding Roots, Mode=OneWay}" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" ContextMenuOpening="TreeView_ContextMenuOpening" KeyDown="TreeView_KeyDown" TextInput="TreeView_TextInput">
                 <TreeView.Resources>
