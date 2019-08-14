@@ -68,7 +68,7 @@
       <!-- View/Other Windows/Settings Store -->
       <Button guid="guidSettingsStoreViewPackageCmdSet" id="SettingsStoreViewToolWindowCommandId" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
-        <Icon guid="CustomImages" id="SettingsStoreViewToolWindowCommand" />
+        <Icon guid="CustomImages" id="SettingsStoreView" />
         <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
           <ButtonText>Settings Store</ButtonText>

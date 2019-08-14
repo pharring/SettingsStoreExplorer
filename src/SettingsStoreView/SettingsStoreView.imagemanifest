@@ -5,21 +5,15 @@
   <Symbols>
     <String Name="Resources" Value="/SettingsStoreView;Component/Resources" />
     <Guid Name="CustomImages" Value="{3da9ddb5-b35b-4ed6-9d52-73aa4c30127e}" />
-    <ID Name="SettingsStoreViewToolWindow" Value="1" />
-    <ID Name="SettingsStoreViewToolWindowCommand" Value="2" />
+    <ID Name="SettingsStoreView" Value="1" />
   </Symbols>
   <Images>
-    <Image Guid="$(CustomImages)" ID="$(SettingsStoreViewToolWindow)">
-      <Source Uri="$(Resources)/SettingsStoreViewToolWindow.16.16.png">
+    <Image Guid="$(CustomImages)" ID="$(SettingsStoreView)">
+      <Source Uri="$(Resources)/SettingsStoreView.16x16.png">
         <Size Value="16" />
       </Source>
-      <Source Uri="$(Resources)/SettingsStoreViewToolWindow.xaml" />
-    </Image>
-    <Image Guid="$(CustomImages)" ID="$(SettingsStoreViewToolWindowCommand)">
-      <Source Uri="$(Resources)/SettingsStoreViewToolWindowCommand.png">
-        <Size Value="16" />
-      </Source>
-      <Source Uri="$(Resources)/SettingsStoreViewToolWindowCommand.xaml" />
+      <Source Uri="$(Resources)/SettingsStoreView.light.xaml" Background="Light" />
+      <Source Uri="$(Resources)/SettingsStoreView.dark.xaml" Background="Dark" />
     </Image>
   </Images>
   <ImageLists />
