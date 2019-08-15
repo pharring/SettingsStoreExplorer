@@ -1,0 +1,308 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!--This header defines the IDs for all the commands exposed by VisualStudio. -->
+  <Extern href="stdidcmd.h"/>
+
+  <!--This header contains the command ids for the menus provided by the shell. -->
+  <Extern href="vsshlids.h"/>
+
+  <!--  Include the definitions for images included in the VS image catalog -->
+  <Include href="KnownImageIds.vsct"/>
+
+  <!-- Include custom assets for images in the image manifest -->
+  <Include href="CustomImages.vsct"/>
+
+  <!--The Commands section is where commands, menus, and menu groups are defined.
+      This section uses a Guid to identify the package that provides the command defined inside it. -->
+  <Commands package="guidSettingsStoreExplorerPackage">
+
+    <!-- Groups section. -->
+    <Groups>
+
+      <!-- Group for all commands. We parent all commands here so they have sensible command well names, then
+           we use placements to put them in the appropriate other groups. -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup" priority="0x100">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="SettingsStoreContextMenus"/>
+      </Group>
+
+      <!-- Group for the "Collection" command in our context menu (contains just one command) -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="NewCollectionCommandGroup" priority="0x100">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="SubCollectionNewContextMenu" />
+      </Group>
+
+      <!-- Group for the "String Value/DWORD Value/QWORD Value/Binary Value" commands in the context menu -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="NewPropertyValuesCommandGroup" priority="0x110">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="SubCollectionNewContextMenu" />
+      </Group>
+
+      <!-- Group to hold the "New" flyout in context menus -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="NewFlyoutGroup" priority="0x100">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="TreeViewItemContextMenu" />
+      </Group>
+
+      <!-- Group for "Rename/Delete" commands in the tree view (collection) context menu -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="RenameDeleteGroup" priority="0x110">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="TreeViewItemContextMenu" />
+      </Group>
+
+      <!-- Group for "Refresh" command in the tree view (collection) context menu -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="RefreshGroup" priority="0x120">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="TreeViewItemContextMenu" />
+      </Group>
+
+      <!-- Group for "Modify" command in the list view (property) context menu -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="ModifyGroup" priority="0x100">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="ListViewItemContextMenu" />
+      </Group>
+
+      <!-- Group to hold all our context menus -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="AllContextMenusGroup" priority="0x100">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="SettingsStoreContextMenus" />
+      </Group>
+
+    </Groups>
+
+    <!--Buttons section. -->
+    <Buttons>
+      <!-- View/Other Windows/Settings Store -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="SettingsStoreExplorerToolWindowCommandId" priority="0x0000" type="Button">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+        <Icon guid="CustomImages" id="SettingsStoreExplorer" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>Settings Store Explorer</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Add new Collection command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewSubCollectionCommandId" priority="0x0100" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Strings>
+          <ButtonText>&amp;Collection</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Add new String value command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewStringValueCommandId" priority="0x0108" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="String" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>&amp;String value</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Add new DWORD value command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewDWORDValueCommandId" priority="0x0110" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Numeric" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>&amp;DWORD value</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Add new QWORD value command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewQWORDValueCommandId" priority="0x0120" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Numeric" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>&amp;QWORD value</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Add new Binary value command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewBinaryValueCommandId" priority="0x0130" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Binary" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>&amp;Binary value</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Rename command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="RenameCommandId" priority="0x0140" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Rename" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>&amp;Rename</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Delete command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="DeleteCommandId" priority="0x0150" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Icon guid="ImageCatalogGuid" id="Cancel" />
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>&amp;Delete</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Modify command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="ModifyCommandId" priority="0x0160" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Strings>
+          <ButtonText>&amp;Modify...</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Refresh command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="RefreshCommandId" priority="0x0170" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Strings>
+          <ButtonText>Refresh</ButtonText>
+        </Strings>
+      </Button>
+
+    </Buttons>
+
+    <!-- Menus section. -->
+    <Menus>
+      <!-- TreeView item context menu -->
+      <Menu guid="guidSettingsStoreExplorerPackageCmdSet" id="TreeViewItemContextMenu" priority="0x0100" type="Context">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllContextMenusGroup" />
+        <Strings>
+          <ButtonText>Collections Context Menu</ButtonText>
+        </Strings>
+      </Menu>
+
+      <!-- "New" sub-menu in our context menus -->
+      <Menu guid="guidSettingsStoreExplorerPackageCmdSet" id="SubCollectionNewContextMenu" priority="0x0100" type="Context">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="NewFlyoutGroup"/>
+        <Strings>
+          <ButtonText>&amp;New</ButtonText>
+        </Strings>
+      </Menu>
+
+      <!-- ListViewItem context menu (when a property is selected) -->
+      <Menu guid="guidSettingsStoreExplorerPackageCmdSet" id="ListViewItemContextMenu" priority="0x0100" type="Context">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllContextMenusGroup" />
+        <Strings>
+          <ButtonText>Properties Context Menu</ButtonText>
+        </Strings>
+      </Menu>
+
+      <!-- ListView context menu (when right-click is not on a property) -->
+      <Menu guid="guidSettingsStoreExplorerPackageCmdSet" id="ListViewContextMenu" priority="0x0100" type="Context">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllContextMenusGroup" />
+        <Strings>
+          <ButtonText>List View Context Menu</ButtonText>
+        </Strings>
+      </Menu>
+
+      <!-- Root of all our context menus -->
+      <Menu guid="guidSettingsStoreExplorerPackageCmdSet" id="SettingsStoreContextMenus" priority="0x0100" type="Context">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_MENU_CONTEXTMENUS"/>
+        <Strings>
+          <ButtonText>Settings Store Explorer Context Menus</ButtonText>
+          <CanonicalName>SettingsStoreExplorer</CanonicalName>
+          <LocCanonicalName>SettingsStoreExplorer</LocCanonicalName>
+        </Strings>
+      </Menu>
+
+    </Menus>
+
+  </Commands>
+
+  <!-- Command Placements section. -->
+  <CommandPlacements>
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewSubCollectionCommandId" priority="0x100">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="NewCollectionCommandGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewStringValueCommandId" priority="0x100">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="NewPropertyValuesCommandGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewDWORDValueCommandId" priority="0x110">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="NewPropertyValuesCommandGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewQWORDValueCommandId" priority="0x120">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="NewPropertyValuesCommandGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="AddNewBinaryValueCommandId" priority="0x130">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="NewPropertyValuesCommandGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="ModifyCommandId" priority="0x100">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="ModifyGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="DeleteCommandId" priority="0x100">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="RenameDeleteGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="RenameCommandId" priority="0x110">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="RenameDeleteGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="RefreshCommandId" priority="0x100">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="RefreshGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="NewFlyoutGroup" priority="0x100">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="ListViewContextMenu" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="RenameDeleteGroup" priority="0x110">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="ListViewItemContextMenu" />
+    </CommandPlacement>
+
+  </CommandPlacements>
+  
+  <!-- Key Bindings section. -->
+  <KeyBindings>
+    <KeyBinding guid="guidSettingsStoreExplorerPackageCmdSet" id="RenameCommandId" key1="VK_F2" editor="guidSettingsStoreExplorerToolWindow" />
+    <KeyBinding guid="guidSettingsStoreExplorerPackageCmdSet" id="DeleteCommandId" key1="VK_DELETE" editor="guidSettingsStoreExplorerToolWindow" />
+    <KeyBinding guid="guidSettingsStoreExplorerPackageCmdSet" id="RefreshCommandId" key1="VK_F5" editor="guidSettingsStoreExplorerToolWindow" />
+  </KeyBindings>
+
+  <Symbols>
+    <!-- The package guid. -->
+    <GuidSymbol name="guidSettingsStoreExplorerPackage" value="{e8762000-5824-4411-bc19-417b39b309f5}" />
+
+    <!-- The Tool Window Guid -->
+    <GuidSymbol name="guidSettingsStoreExplorerToolWindow" value="{f24ec500-28a5-4f29-82da-4e7d307f9d63}" />
+
+    <!-- The guid used to group the menu commands together -->
+    <GuidSymbol name="guidSettingsStoreExplorerPackageCmdSet" value="{9fc9f69d-174d-4876-b28b-dc1e4fac89dc}">
+
+      <!-- Command IDs (buttons) -->
+      <IDSymbol name="SettingsStoreExplorerToolWindowCommandId" value="0x0100" />
+      <IDSymbol name="AddNewSubCollectionCommandId" value="0x0101" />
+      <IDSymbol name="AddNewStringValueCommandId" value="0x0102" />
+      <IDSymbol name="AddNewDWORDValueCommandId" value="0x0103" />
+      <IDSymbol name="AddNewQWORDValueCommandId" value="0x0104" />
+      <IDSymbol name="AddNewBinaryValueCommandId" value="0x0105" />
+      <IDSymbol name="RenameCommandId" value="0x0106" />
+      <IDSymbol name="DeleteCommandId" value="0x0107" />
+      <IDSymbol name="ModifyCommandId" value="0x0108" />
+      <IDSymbol name="RefreshCommandId" value="0x0109" />
+
+      <!-- Group IDs -->
+      <IDSymbol name="AllCommandsGroup" value="0x0200" />
+      <IDSymbol name="AllContextMenusGroup" value="0x0201" />
+      <IDSymbol name="NewCollectionCommandGroup" value="0x0202" />
+      <IDSymbol name="NewPropertyValuesCommandGroup" value="0x0203" />
+      <IDSymbol name="NewFlyoutGroup" value="0x0204" />
+      <IDSymbol name="RenameDeleteGroup" value="0x0205" />
+      <IDSymbol name="ModifyGroup" value="0x0206" />
+      <IDSymbol name="RefreshGroup" value="0x0207" />
+
+      <!-- Menu IDs -->
+      <IDSymbol name="SubCollectionNewContextMenu" value="0x300" />
+      <IDSymbol name="TreeViewItemContextMenu" value="0x301" />
+      <IDSymbol name="ListViewItemContextMenu" value="0x302" />
+      <IDSymbol name="ListViewContextMenu" value="0x303" />
+      <IDSymbol name="SettingsStoreContextMenus" value="0x304" />
+    </GuidSymbol>
+  </Symbols>
+
+</CommandTable>

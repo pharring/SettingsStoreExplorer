@@ -1,0 +1,26 @@
+﻿<ui:DialogWindow x:Name="editStringDialog" x:Class="SettingsStoreExplorer.EditStringDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:ui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+    mc:Ignorable="d" 
+    Title="Edit String"
+    WindowStartupLocation="CenterOwner"
+    HasDialogFrame="True"
+    ShowInTaskbar="False"
+    SizeToContent="Height"
+    Width="400"
+    ResizeMode="NoResize"
+    FocusManager.FocusedElement="{Binding ElementName=ValueTextBox}">
+    <StackPanel Orientation="Vertical">
+        <Label Margin="10,10,10,4" Content="Value _name:"/>
+        <TextBox Margin="10,0" Text="{Binding Name, Mode=OneTime}" IsReadOnly="True" Background="{Binding Background, ElementName=editIntegerDialog}" />
+        <Label Content="_Value data:" Margin="10,10,10,4" />
+        <TextBox Name="ValueTextBox" Margin="10,0" Text="{Binding Value, Mode=OneTime}" />
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,10,0,0">
+            <ui:DialogButton Name="OkButton" Content="OK" Uid="Button_OK" IsDefault="True" Click="OkButton_Click" />
+            <ui:DialogButton Name="CancelButton" Content="Cancel" Uid="Button_Cancel" IsCancel="True" />
+        </StackPanel>
+    </StackPanel>
+</ui:DialogWindow>

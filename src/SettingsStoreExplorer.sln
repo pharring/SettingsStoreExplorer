@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsStoreExplorer", "SettingsStoreExplorer\SettingsStoreExplorer.csproj", "{4ACB08BB-D2F9-4E35-BD4F-A170D62B6D71}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Marketplace", "Marketplace", "{183A5BD5-90D5-441E-8478-EA6BA967CD0A}"
+	ProjectSection(SolutionItems) = preProject
+		..\marketplace\overview.md = ..\marketplace\overview.md
+		..\marketplace\publishManifest.json = ..\marketplace\publishManifest.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5FCADACA-F2C1-425D-81E8-A78036581A40}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{0F4DD1ED-029B-46C7-8F27-3412207BE18E}"
+	ProjectSection(SolutionItems) = preProject
+		..\marketplace\images\QuickSearch.png = ..\marketplace\images\QuickSearch.png
+		..\marketplace\images\SettingsStoreToolWindow.png = ..\marketplace\images\SettingsStoreToolWindow.png
+		..\marketplace\images\ViewMenu.png = ..\marketplace\images\ViewMenu.png
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4ACB08BB-D2F9-4E35-BD4F-A170D62B6D71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ACB08BB-D2F9-4E35-BD4F-A170D62B6D71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ACB08BB-D2F9-4E35-BD4F-A170D62B6D71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ACB08BB-D2F9-4E35-BD4F-A170D62B6D71}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0F4DD1ED-029B-46C7-8F27-3412207BE18E} = {183A5BD5-90D5-441E-8478-EA6BA967CD0A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC5B2F56-8820-4624-A7BF-5E89FAD6C645}
+	EndGlobalSection
+EndGlobal
