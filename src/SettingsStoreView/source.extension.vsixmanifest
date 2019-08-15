@@ -2,11 +2,15 @@
 <!-- Copyright (c) Paul Harrington.  All Rights Reserved.  Licensed under the MIT License.  See LICENSE in the project root for license information. -->
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="SettingsStoreView.4e51ef4d-4a0b-46d2-8230-8881625af1a2" Version="1.0" Language="en-US" Publisher="Paul Harrington" />
-        <DisplayName>SettingsStoreView</DisplayName>
-        <Description xml:space="preserve">A tool window for viewing the contents of the VS Settings Store.</Description>
+        <Identity Id="SettingsStoreExplorer.4e51ef4d-4a0b-46d2-8230-8881625af1a2" Version="1.0" Language="en-US" Publisher="Paul Harrington" />
+        <DisplayName>Settings Store Explorer</DisplayName>
+        <Description xml:space="preserve">A tool window for viewing and editing the contents of the VS Settings Store.</Description>
+        <MoreInfo>https://github.com/pharring/SettingsStoreView</MoreInfo>
         <License>LICENSE</License>
+        <GettingStartedGuide>https://github.com/pharring/SettingsStoreView#getting-started</GettingStartedGuide>
+        <ReleaseNotes>https://github.com/pharring/SettingsStoreView/blob/master/CHANGELOG.md</ReleaseNotes>
         <Icon>Resources\SettingsStoreView.128x128.png</Icon>
+        <Tags>Settings;Store;Explorer;Registry;Hive</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0, 17.0)" />

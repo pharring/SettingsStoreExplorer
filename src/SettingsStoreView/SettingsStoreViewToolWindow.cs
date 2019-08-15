@@ -47,7 +47,7 @@ namespace SettingsStoreView
         /// </summary>
         public SettingsStoreViewToolWindow() : base(null)
         {
-            Caption = "Settings Store";
+            Caption = VSPackage.ToolWindowCaption;
             BitmapImageMoniker = KnownMonikers.SettingsStoreView;
 
             _addNewSubCollectionCommand = new MenuCommand(AddNewSubCollectionExecuted, AddNewSubCollectionCommandId);

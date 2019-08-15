@@ -30,7 +30,7 @@ namespace SettingsStoreView
     [Guid(c_packageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [ProvideToolWindow(typeof(SettingsStoreViewToolWindow))]
+    [ProvideToolWindow(typeof(SettingsStoreViewToolWindow), Style = VsDockStyle.Tabbed, DockedWidth = 600, Window = "DocumentWell", Orientation = ToolWindowOrientation.Left)]
     [ProvideKeyBindingTable(SettingsStoreViewToolWindow.c_toolWindowGuidString, 113)]
     public sealed class SettingsStoreViewPackage : AsyncPackage
     {

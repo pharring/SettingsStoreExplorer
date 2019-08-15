@@ -63,6 +63,11 @@
     <Compile Include="ItemContainerGeneratorExtensions.cs" />
     <Compile Include="IVsWritableSettingsStoreExtensions.cs" />
     <Compile Include="ObservableCollectionExtensions.cs" />
+    <Compile Include="VSPackage.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VSPackage.resx</DependentUpon>
+    </Compile>
     <Compile Include="SettingsStoreCommandSet.cs" />
     <Compile Include="SettingsStoreItemExtensions.cs" />
     <Compile Include="DwordToStringConverter.cs" />
@@ -213,8 +218,10 @@
   <ItemGroup>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
-      <ManifestResourceName>VSPackage</ManifestResourceName>
+      <ManifestResourceName>SettingsStoreView.VSPackage</ManifestResourceName>
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>VSPackage.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
