@@ -114,6 +114,10 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="CustomImages.vsct" />
+    <Content Include="Resources\SettingsStoreView.128x128.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="SettingsStoreView.imagemanifest">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
