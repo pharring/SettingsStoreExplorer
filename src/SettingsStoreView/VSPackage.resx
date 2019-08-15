@@ -118,13 +118,16 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="110" xml:space="preserve">
-    <value>SettingsStoreViewPackage Extension</value>
+    <value>Settings Store Explorer Extension</value>
   </data>
   <data name="112" xml:space="preserve">
-    <value>SettingsStoreViewPackage Visual Studio Extension Detailed Info</value>
+    <value>A tool window for viewing and editing the contents of the VS Settings Store.</value>
   </data>
   <data name="113" xml:space="preserve">
-    <value>Settings Store View</value>
+    <value>Settings Store Explorer</value>
     <comment>Keybinding editor name</comment>
+  </data>
+  <data name="ToolWindowCaption" xml:space="preserve">
+    <value>Settings Store Explorer</value>
   </data>
 </root>

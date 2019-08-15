@@ -66,12 +66,12 @@
     <!--Buttons section. -->
     <Buttons>
       <!-- View/Other Windows/Settings Store -->
-      <Button guid="guidSettingsStoreViewPackageCmdSet" id="SettingsStoreViewToolWindowCommandId" priority="0x0100" type="Button">
+      <Button guid="guidSettingsStoreViewPackageCmdSet" id="SettingsStoreViewToolWindowCommandId" priority="0x0000" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
         <Icon guid="CustomImages" id="SettingsStoreView" />
         <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
-          <ButtonText>Settings Store</ButtonText>
+          <ButtonText>Settings Store Explorer</ButtonText>
         </Strings>
       </Button>
 
@@ -199,9 +199,9 @@
       <Menu guid="guidSettingsStoreViewPackageCmdSet" id="SettingsStoreContextMenus" priority="0x0100" type="Context">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_MENU_CONTEXTMENUS"/>
         <Strings>
-          <ButtonText>Settings Store View Context Menus</ButtonText>
-          <CanonicalName>SettingsStoreView</CanonicalName>
-          <LocCanonicalName>SettingsStoreView</LocCanonicalName>
+          <ButtonText>Settings Store Explorer Context Menus</ButtonText>
+          <CanonicalName>SettingsStoreExplorer</CanonicalName>
+          <LocCanonicalName>SettingsStoreExplorer</LocCanonicalName>
         </Strings>
       </Menu>
 
