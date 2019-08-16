@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <!-- AssemblyVersion needs to be set before generating the assembly version info file. -->
+    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">$(Version)</AssemblyVersion>
+  </PropertyGroup>
+  
+  <!-- Generate assembly version info using the same technique as SDK projects. -->
+  <Import Project="$(MSBuildThisFileDirectory)\Microsoft.NET.GenerateAssemblyInfo.targets" />
+
+  <!-- Target used during the VSIX build to get the VSIX package version. Referenced in the .vsixmanifest file. -->
+  <Target Name="GetVSIXVersion" Outputs="$(_VSIXVersion)">
+    <PropertyGroup>
+      <_VSIXVersion>$(Version)</_VSIXVersion>
+    </PropertyGroup>
+  </Target>
+
+</Project>
