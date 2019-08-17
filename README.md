@@ -1,6 +1,10 @@
 # Settings Store Explorer
 A Visual Studio Extension with a tool window that allows you to view and edit the contents of Visual Studio's Settings Store.
 
+[![Visual Studio Marketplace](http://vsmarketplacebadge.apphb.com/version/PaulHarrington.SettingsStoreExplorer.svg)](https://marketplace.visualstudio.com/items?itemName=PaulHarrington.SettingsStoreExplorer)
+[![Visual Studio Marketplace Rating](http://vsmarketplacebadge.apphb.com/rating-star/PaulHarrington.SettingsStoreExplorer.svg)](https://marketplace.visualstudio.com/items?itemName=PaulHarrington.SettingsStoreExplorer)
+[![Visual Studio Marketplace Downloads](http://vsmarketplacebadge.apphb.com/downloads-short/PaulHarrington.SettingsStoreExplorer.svg)](https://marketplace.visualstudio.com/items?itemName=PaulHarrington.SettingsStoreExplorer)
+
 The "Settings Store" is like the registry -- in fact, behind the scenes, it's imported and managed as a registry hive.
 
 In earlier versions of Visual Studio, you could use Regedit to view/edit the settings store. However, that's no longer possible (since Dev14, I think) since Visual Studio supports side-by-side installation with independent settings.
