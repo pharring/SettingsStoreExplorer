@@ -11,5 +11,25 @@
   "qna": true,
   "repo": "https://github.com/pharring/SettingsStoreExplorer",
   "assetFiles": [
+    {
+      "pathOnDisk": "images/EditDWORDValueDialog.png",
+      "targetPath": "images/EditDWORDValueDialog.png"
+    },
+    {
+      "pathOnDisk": "images/QuickSearch.png",
+      "targetPath": "images/QuickSearch.png"
+    },
+    {
+      "pathOnDisk": "images/SettingsStoreToolWindow.png",
+      "targetPath": "images/SettingsStoreToolWindow.png"
+    },
+    {
+      "pathOnDisk": "images/SubCollectionContextMenu.png",
+      "targetPath": "images/SubCollectionContextMenu.png"
+    },
+    {
+      "pathOnDisk": "images/ViewMenu.png",
+      "targetPath": "images/ViewMenu.png"
+    }
   ]
 }
