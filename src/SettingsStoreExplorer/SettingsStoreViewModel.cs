@@ -17,12 +17,8 @@ using Microsoft.VisualStudio.Threading;
 using Task = System.Threading.Tasks.Task;
 
 // I believe it's safe to suppress the analyzer warning about accessing the settings
-// store only from the main thread. We know that the settings store manager is
-// implemented in .NET and it's a free-threaded object. That much means there's no
-// deadlocking. In addition, it's implementation uses registry APIs which are
-// thread-safe. And we're not modifying any data -- just querying. Switching to
-// the UI thread would diminish the benefit of asynchronous expansion by tying
-// up the UI thread.
+// store only from the main thread. Switching to the UI thread everywhere would
+// diminish the benefit of asynchronous expansion by tying up the UI thread.
 #pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
 
 namespace SettingsStoreExplorer
@@ -203,23 +199,16 @@ namespace SettingsStoreExplorer
             switch (type)
             {
                 case __VsSettingsType.SettingsType_String:
-                    ErrorHandler.ThrowOnFailure(store.GetString(path, name, out var stringValue));
-                    return stringValue;
+                    return store.GetString(path, name);
 
                 case __VsSettingsType.SettingsType_Int:
-                    ErrorHandler.ThrowOnFailure(store.GetUnsignedInt(path, name, out var uintValue));
-                    return uintValue;
+                    return store.GetUint32(path, name);
 
                 case __VsSettingsType.SettingsType_Int64:
-                    ErrorHandler.ThrowOnFailure(store.GetUnsignedInt64(path, name, out var ulongValue));
-                    return ulongValue;
+                    return store.GetUint64(path, name);
 
                 case __VsSettingsType.SettingsType_Binary:
-                    uint[] actualByteLength = { 0 };
-                    ErrorHandler.ThrowOnFailure(store.GetBinary(path, name, 0, null, actualByteLength));
-                    byte[] binaryValue = new byte[actualByteLength[0]];
-                    ErrorHandler.ThrowOnFailure(store.GetBinary(path, name, actualByteLength[0], binaryValue, actualByteLength));
-                    return binaryValue;
+                    return store.GetByteArray(path, name);
 
                 default:
                     return null;
@@ -264,9 +253,10 @@ namespace SettingsStoreExplorer
             // is empty or not so that the tree view knows whether to display the expander.
             var store = Root.SettingsStore;
 
-            // Don't use GetSubCollectionCount because it's essentially a full enumeration
-            // which defeats this optimization.
-            if (ErrorHandler.Succeeded(store.GetSubCollectionName(Path, 0u, out _)))
+            // It is important that GetSubCollectionNames doesn't do eager evaluation,
+            // otherwise it defeats the placeholder optimization.
+            var names = store.GetSubCollectionNames(Path);
+            if (names.Any())
             {
                 // Create a single placeholder that knows how to expand its parent.
                 yield return new SettingsStoreSubCollectionPlaceholder(this);
@@ -304,17 +294,9 @@ namespace SettingsStoreExplorer
             var store = Root.SettingsStore;
             var path = Path;
 
-            // Don't get the count up-front. It's essentially an enumeration which is as expensive
-            // as just looping until we get an error.
-
             var subCollections = new List<SettingsStoreSubCollection>();
-            for (uint index = 0; ; index++)
+            foreach (var subCollectionName in store.GetSubCollectionNames(path))
             {
-                if (ErrorHandler.Failed(store.GetSubCollectionName(path, index, out string subCollectionName)))
-                {
-                    break;
-                }
-
                 subCollections.Add(new SettingsStoreSubCollection(this, subCollectionName));
             }
 
@@ -375,20 +357,10 @@ namespace SettingsStoreExplorer
             var path = Path;
 
             var properties = new List<SettingsStoreProperty>();
-            for (uint index = 0; ; index++)
+            foreach (var name in store.GetPropertyNames(path))
             {
-                if (ErrorHandler.Failed(store.GetPropertyName(path, index, out var name)))
-                {
-                    break;
-
-                }
-
-                if (ErrorHandler.Failed(store.GetPropertyType(path, name, out var type)))
-                {
-                    break;
-                }
-
-                properties.Add(SettingsStoreProperty.CreateInstance(this, name, (__VsSettingsType)type));
+                var type = store.GetPropertyType(path, name);
+                properties.Add(SettingsStoreProperty.CreateInstance(this, name, type));
             }
 
             properties.Sort((p, q) => StringComparer.OrdinalIgnoreCase.Compare(p.Name, q.Name));
@@ -457,7 +429,8 @@ namespace SettingsStoreExplorer
         {
             Roots = new SettingsStoreSubCollection[] {
                 new RootSettingsStore(settingsManager, __VsEnclosingScopes.EnclosingScopes_Configuration, "Config"),
-                new RootSettingsStore(settingsManager, __VsEnclosingScopes.EnclosingScopes_UserSettings, "User")
+                new RootSettingsStore(settingsManager, __VsEnclosingScopes.EnclosingScopes_UserSettings, "User"),
+                new RootSettingsStore(settingsManager, (__VsEnclosingScopes)__VsEnclosingScopes2.EnclosingScopes_Remote, "Remote")
             };
         }
 

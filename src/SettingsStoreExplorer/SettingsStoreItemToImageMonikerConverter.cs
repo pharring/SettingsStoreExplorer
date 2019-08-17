@@ -20,6 +20,9 @@ namespace SettingsStoreExplorer
                         case __VsEnclosingScopes.EnclosingScopes_UserSettings:
                             return VsKnownMonikers.User;
 
+                        case (__VsEnclosingScopes)__VsEnclosingScopes2.EnclosingScopes_Remote:
+                            return VsKnownMonikers.ServerSettings;
+
                         default:
                             return VsKnownMonikers.Registry;
                     }

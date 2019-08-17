@@ -61,6 +61,7 @@
     <Compile Include="BinaryToHexDumpConverter.cs" />
     <Compile Include="DependencyObjectExtensions.cs" />
     <Compile Include="ItemContainerGeneratorExtensions.cs" />
+    <Compile Include="IVsSettingsStoreExtensions.cs" />
     <Compile Include="IVsWritableSettingsStoreExtensions.cs" />
     <Compile Include="ObservableCollectionExtensions.cs" />
     <Compile Include="VSPackage.Designer.cs">
