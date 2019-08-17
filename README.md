@@ -5,6 +5,8 @@ The "Settings Store" is like the registry -- in fact, behind the scenes, it's im
 
 In earlier versions of Visual Studio, you could use Regedit to view/edit the settings store. However, that's no longer possible (since Dev14, I think) since Visual Studio supports side-by-side installation with independent settings.
 
+[![Build Status](https://dev.azure.com/pharring/SettingsStoreExplorer/_apis/build/status/pharring.SettingsStoreExplorer?branchName=master)](https://dev.azure.com/pharring/SettingsStoreExplorer/_build/latest?definitionId=1&branchName=master)
+
 ## Getting Started
 Download and install the extension from the Visual Studio Marketplace.
 
