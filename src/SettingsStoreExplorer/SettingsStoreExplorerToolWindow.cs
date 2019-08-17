@@ -186,9 +186,10 @@ namespace SettingsStoreExplorer
                 var newPropertyName = subCollection.GenerateNewPropertyName();
                 if (ErrorHandler.Succeeded(setter(settingsStore, newPropertyName, subCollection.Path)))
                 {
-                    ErrorHandler.ThrowOnFailure(settingsStore.GetPropertyType(subCollection.Path, newPropertyName, out uint type));
+                    var type = settingsStore.GetPropertyType(subCollection.Path, newPropertyName);
+
                     // Update the view model.
-                    var newProperty = SettingsStoreProperty.CreateInstance(subCollection, newPropertyName, (__VsSettingsType)type);
+                    var newProperty = SettingsStoreProperty.CreateInstance(subCollection, newPropertyName, type);
                     subCollection.Properties.Add(newProperty);
 
                     // Move focus to the newly-created value and start in-place editing of the name.
@@ -250,8 +251,7 @@ namespace SettingsStoreExplorer
                 // Create a sibling and check for duplicate names.
                 var parent = subCollection.Parent;
                 var renamedSubCollection = new SettingsStoreSubCollection(parent, newName);
-                ErrorHandler.ThrowOnFailure(settingsStore.CollectionExists(renamedSubCollection.Path, out int exists));
-                if (exists != 0)
+                if (settingsStore.CollectionExists(renamedSubCollection.Path))
                 {
                     var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
                     ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming collection", $"There is already a collection called '{newName}'. Try again with a different name.", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
@@ -261,7 +261,7 @@ namespace SettingsStoreExplorer
                 // Clone and recreate the entire tree beneath this collection and then delete the original.
                 ErrorHandler.ThrowOnFailure(settingsStore.CreateCollection(renamedSubCollection.Path));
                 settingsStore.CopyTree(subCollection, renamedSubCollection);
-                settingsStore.DeleteCollection(subCollection.Path);
+                ErrorHandler.ThrowOnFailure(settingsStore.DeleteCollection(subCollection.Path));
 
                 // Update the view model.
                 subCollection.Rename(newName);
@@ -361,19 +361,24 @@ namespace SettingsStoreExplorer
             _control.InPlaceEditListViewItem(property, property.Name, newName =>
             {
                 ThreadHelper.ThrowIfNotOnUIThread();
-                if (newName.Length == 0)
+
+                // Allow renaming to blank to support the (Default) value, but only for strings.
+                if (newName.Length == 0 && property.Type != __VsSettingsType.SettingsType_String)
                 {
                     var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-                    ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming property", $"A property name cannot be blank. Try again with a different name.", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
+                    ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming property", "Only a string property may have a blank name. Try again with a different name.", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
                     return;
                 }
 
                 // Check for duplicate names.
-                ErrorHandler.ThrowOnFailure(settingsStore.PropertyExists(property.CollectionPath, newName, out int exists));
-                if (exists != 0)
+                if (settingsStore.PropertyExists(property.CollectionPath, newName))
                 {
                     var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-                    ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming property", $"There is already a property called '{newName}'. Try again with a different name.", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
+                    var message = newName.Length == 0 ?
+                        "There is already a (Default) property. Delete it first and try again or use a different name." :
+                        $"There is already a property called '{newName}'. Try again with a different name.";
+
+                    ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming property", message, null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
                     return;
                 }
 

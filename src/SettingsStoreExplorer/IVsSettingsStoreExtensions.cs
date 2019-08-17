@@ -66,6 +66,12 @@ namespace SettingsStoreExplorer
             }
         }
 
+        public static bool CollectionExists(this IVsSettingsStore store, string collectionPath)
+        {
+            ErrorHandler.ThrowOnFailure(store.CollectionExists(collectionPath, out int exists));
+            return exists != 0;
+        }
+
         public static IEnumerable<string> GetPropertyNames(this IVsSettingsStore store, string collectionPath)
         {
             for (uint index = 0; ; index++)
@@ -92,6 +98,12 @@ namespace SettingsStoreExplorer
         {
             ErrorHandler.ThrowOnFailure(store.GetPropertyType(collectionPath, propertyName, out var type));
             return (__VsSettingsType)type;
+        }
+
+        public static bool PropertyExists(this IVsSettingsStore store, string collectionPath, string propertyName)
+        {
+            ErrorHandler.ThrowOnFailure(store.PropertyExists(collectionPath, propertyName, out int exists));
+            return exists != 0;
         }
     }
 }
