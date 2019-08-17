@@ -1,11 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup>
-    <!-- AssemblyVersion needs to be set before generating the assembly version info file. -->
-    <AssemblyVersion Condition="'$(AssemblyVersion)' == ''">$(Version)</AssemblyVersion>
-  </PropertyGroup>
-  
+  <!--
+        Derive the AssemblyVersion from the NuGetVersion.
+        This task is referenced by Microsoft.NET.GenerateAssemblyInfo.targets.
+        Note that the AssemblyVersion always has 4 parts (major,minor,build,revision)
+        Zeros are appended if there are fewer parts in NuGetVersion.
+        Any pre-release suffix is stripped off.
+        
+      e.g.:
+        If the NuGetVersion is 1.2 the AssemblyVersion is 1.2.0.0
+        If the NuGetVersion is 1.2.3 the AssemblyVersion is 1.2.3.0
+        If the NuGetVersion is 1.2.3.4 the AssemblyVersion is 1.2.3.4
+        If the NuGetVersion is 1.2.3-beta.4 the AssemblyVersion is 1.2.3.0
+  -->
+  <UsingTask TaskName="GetAssemblyVersion" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildFrameworkToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <NuGetVersion ParameterType="System.String" Required="true" />
+      <AssemblyVersion ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Code Type="Fragment" Language="cs">
+<![CDATA[
+        while (NuGetVersion.Length > 0)
+        {
+            Version version;
+            if (Version.TryParse(NuGetVersion, out version))
+            {
+                var revision = Math.Max(version.Revision, 0);
+                var build = Math.Max(version.Build, 0);
+                AssemblyVersion = new Version(version.Major, version.Minor, build, revision).ToString();
+                break;
+            }
+        
+            NuGetVersion = NuGetVersion.Substring(0, NuGetVersion.Length - 1);
+        }
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
   <!-- Generate assembly version info using the same technique as SDK projects. -->
   <Import Project="$(MSBuildThisFileDirectory)\Microsoft.NET.GenerateAssemblyInfo.targets" />
 
