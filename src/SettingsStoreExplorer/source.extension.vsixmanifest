@@ -5,10 +5,10 @@
         <Identity Id="SettingsStoreExplorer.4e51ef4d-4a0b-46d2-8230-8881625af1a2" Version="|%CurrentProject%;GetVSIXVersion|" Language="en-US" Publisher="Paul Harrington" />
         <DisplayName>Settings Store Explorer</DisplayName>
         <Description xml:space="preserve">A tool window for viewing and editing the contents of the VS Settings Store.</Description>
-        <MoreInfo>https://github.com/pharring/SettingsStoreView</MoreInfo>
+        <MoreInfo>https://github.com/pharring/SettingsStoreExplorer</MoreInfo>
         <License>LICENSE</License>
-        <GettingStartedGuide>https://github.com/pharring/SettingsStoreView#getting-started</GettingStartedGuide>
-        <ReleaseNotes>https://github.com/pharring/SettingsStoreView/blob/master/CHANGELOG.md</ReleaseNotes>
+        <GettingStartedGuide>https://github.com/pharring/SettingsStoreExplorer#getting-started</GettingStartedGuide>
+        <ReleaseNotes>https://github.com/pharring/SettingsStoreExplorer/blob/master/CHANGELOG.md</ReleaseNotes>
         <Icon>Resources\SettingsStoreExplorer.128x128.png</Icon>
         <Tags>Settings;Store;Explorer;Registry;Hive</Tags>
     </Metadata>

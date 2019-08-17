@@ -2,14 +2,14 @@
   "$schema": "http://json.schemastore.org/vsix-publish",
   "categories": [ "coding", "other" ],
   "identity": {
-    "internalName": "SettingsStoreView"
+    "internalName": "SettingsStoreExplorer"
   },
   "overview": "overview.md",
   "priceCategory": "free",
   "publisher": "PaulHarrington",
   "private": false,
   "qna": true,
-  "repo": "https://github.com/pharring/SettingsStoreView",
+  "repo": "https://github.com/pharring/SettingsStoreExplorer",
   "assetFiles": [
   ]
 }

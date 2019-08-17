@@ -33,4 +33,4 @@ A collection or property can be deleted by pressing <kbd>Delete</kbd>.
 Pressing <kbd>F5</kbd> refreshes the view.
 
 ## Support
-If you find a bug in this extension or have a feature request, please visit https://github.com/pharring/SettingsStoreView to file an issue.
+If you find a bug in this extension or have a feature request, please visit https://github.com/pharring/SettingsStoreExplorer to file an issue.
