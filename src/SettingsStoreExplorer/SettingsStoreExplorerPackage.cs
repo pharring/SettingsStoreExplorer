@@ -4,7 +4,10 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
 
 namespace SettingsStoreExplorer
@@ -61,12 +64,26 @@ namespace SettingsStoreExplorer
         /// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            Telemetry.Client.TrackEvent(Telemetry.CreateInitializeTelemetryItem(nameof(SettingsStoreExplorerPackage) + "." + nameof(InitializeAsync)));
+            var shellVersion = await GetShellVersionAsync(cancellationToken);
+            var initializeTelemetry = Telemetry.CreateInitializeTelemetryItem(nameof(SettingsStoreExplorerPackage) + "." + nameof(InitializeAsync));
+            initializeTelemetry.Properties.Add("VSVersion", shellVersion);
+            Telemetry.Client.TrackEvent(initializeTelemetry);
 
-            // When initialized asynchronously, the current thread may be a background thread at this point.
-            // Do any initialization that requires the UI thread after switching to the UI thread.
-            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             await SettingsStoreExplorerToolWindowCommand.InitializeAsync(this);
+        }
+
+        private async Task<string> GetShellVersionAsync(CancellationToken cancellationToken)
+        {
+            if (await GetServiceAsync(typeof(SVsShell)) is IVsShell shell)
+            {
+                await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+                if (ErrorHandler.Succeeded(shell.GetProperty((int)__VSSPROPID5.VSSPROPID_ReleaseVersion, out var obj)) && obj != null)
+                {
+                    return obj.ToString();
+                }
+            }
+
+            return "Unknown";
         }
 
         #endregion

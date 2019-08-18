@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Microsoft;
 using Microsoft.VisualStudio.Shell.Interop;
+
 using static SettingsStoreExplorer.SettingsStoreCommandSet;
 
 namespace SettingsStoreExplorer
@@ -170,6 +171,7 @@ namespace SettingsStoreExplorer
                         position = frameworkElement.PointToScreen(new Point(e.CursorLeft, e.CursorTop));
                     }
 
+                    Telemetry.Client.TrackEvent("Show" + nameof(TreeViewItemContextMenu));
                     MenuCommandService.ShowContextMenu(TreeViewItemContextMenu, (int)position.X, (int)position.Y);
                 }
             }
@@ -186,7 +188,18 @@ namespace SettingsStoreExplorer
                 // If the selection is on an item, show the "Modify/Rename/Delete" context menu.
                 // Otherwise, show the "New" context menu.
 
-                var menuId = listViewItem != null ? ListViewItemContextMenu : ListViewContextMenu;
+                CommandID menuId;
+
+                if (listViewItem != null)
+                {
+                    menuId = ListViewItemContextMenu;
+                    Telemetry.Client.TrackEvent("Show" + nameof(ListViewItemContextMenu));
+                }
+                else
+                {
+                    menuId = ListViewContextMenu;
+                    Telemetry.Client.TrackEvent("Show" + nameof(ListViewContextMenu));
+                }
 
                 var position = e.CursorLeft == -1 && e.CursorTop == -1
                     ? listViewItem.PointToScreen(new Point(listViewItem.ActualWidth / 2, listViewItem.ActualHeight / 2))

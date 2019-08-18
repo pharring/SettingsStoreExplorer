@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Paul Harrington.  All Rights Reserved.  Licensed under the MIT License.  See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -60,6 +61,7 @@ namespace SettingsStoreExplorer
                         if (dialog.ShowModal() == true)
                         {
                             ErrorHandler.ThrowOnFailure(writableStore.SetString(property.CollectionPath, property.Name, (string)property.Value));
+                            Telemetry.Client.TrackEvent("PropertyModified", new Dictionary<string, string> { ["Type"] = property.Type.ToString() });
                         }
                     }
                     break;
@@ -71,6 +73,7 @@ namespace SettingsStoreExplorer
                         if (dialog.ShowModal() == true)
                         {
                             ErrorHandler.ThrowOnFailure(writableStore.SetUnsignedInt(property.CollectionPath, property.Name, (uint)property.Value));
+                            Telemetry.Client.TrackEvent("PropertyModified", new Dictionary<string, string> { ["Type"] = property.Type.ToString() });
                         }
                     }
                     break;
@@ -82,6 +85,7 @@ namespace SettingsStoreExplorer
                         if (dialog.ShowModal() == true)
                         {
                             ErrorHandler.ThrowOnFailure(writableStore.SetUnsignedInt64(property.CollectionPath, property.Name, (ulong)property.Value));
+                            Telemetry.Client.TrackEvent("PropertyModified", new Dictionary<string, string> { ["Type"] = property.Type.ToString() });
                         }
                     }
                     break;
@@ -94,6 +98,7 @@ namespace SettingsStoreExplorer
                         {
                             var binary = (byte[])property.Value;
                             ErrorHandler.ThrowOnFailure(writableStore.SetBinary(property.CollectionPath, property.Name, (uint)binary.Length, binary));
+                            Telemetry.Client.TrackEvent("PropertyModified", new Dictionary<string, string> { ["Type"] = property.Type.ToString() });
                         }
                     }
                     break;
