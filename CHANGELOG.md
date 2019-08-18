@@ -5,6 +5,9 @@ All notable changes will be documented in this file.
 ### Added
 - Usage telemetry
 
+### Fixed
+- Prevent delete during rename. [Issue #47](https://github.com/pharring/SettingsStoreExplorer/issues/47)
+
 ## Version [1.0.0] (August 17th 2019)
 ### Changed
 - Open sourced on https://github.com/pharring/SettingsStoreExplorer
