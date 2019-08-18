@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Microsoft;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 using static SettingsStoreExplorer.SettingsStoreCommandSet;
@@ -61,6 +62,18 @@ namespace SettingsStoreExplorer
             }
         }
 
+        /// <summary>
+        /// Set the shell modal during in-place editing to prevent routing of keybindings while editing.
+        /// </summary>
+        /// <param name="isEditing">Whether we are doing an in-place edit.</param>
+        private void SetIsInPlaceEditing(bool isEditing)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var uiShell = (IVsUIShell)_serviceProvider.GetService(typeof(SVsUIShell));
+            Assumes.Present(uiShell);
+            uiShell.EnableModeless(fEnable: isEditing ? 0 : 1);
+        }
+
         public void InPlaceEditTreeViewItem(object item, string initialText, Action<string> onAcceptEdit)
         {
             // Find the control for the given item.
@@ -69,7 +82,7 @@ namespace SettingsStoreExplorer
             {
                 treeViewItem.BringIntoView();
                 treeViewItem.Focus();
-                treeViewItem.InPlaceEdit(initialText, onAcceptEdit);
+                treeViewItem.InPlaceEdit(initialText, SetIsInPlaceEditing, onAcceptEdit);
             }
         }
 
@@ -121,7 +134,7 @@ namespace SettingsStoreExplorer
             {
                 listViewItem.BringIntoView();
                 listViewItem.Focus();
-                listViewItem.InPlaceEdit(initialText, onAcceptEdit);
+                listViewItem.InPlaceEdit(initialText, SetIsInPlaceEditing, onAcceptEdit);
             }
         }
 

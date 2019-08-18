@@ -11,18 +11,18 @@ namespace SettingsStoreExplorer
 {
     internal static class ControlExtensions
     {
-        public static void InPlaceEdit(this Control control, string initialText, Action<string> onAcceptEdit)
+        public static void InPlaceEdit(this Control control, string initialText, Action<bool> onEditing, Action<string> onAcceptEdit)
         {
-            if (!InPlaceEditInternal(control, initialText, onAcceptEdit))
+            if (!InPlaceEditInternal(control, initialText, onEditing, onAcceptEdit))
             {
                 // This can fail for virtualized controls. Retry after a layout/render.
 #pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
-                control.Dispatcher.Invoke(() => InPlaceEditInternal(control, initialText, onAcceptEdit), DispatcherPriority.Render);
+                control.Dispatcher.Invoke(() => InPlaceEditInternal(control, initialText, onEditing, onAcceptEdit), DispatcherPriority.Render);
 #pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
             }
         }
 
-        private static bool InPlaceEditInternal(Control control, string initialText, Action<string> onAcceptEdit)
+        private static bool InPlaceEditInternal(Control control, string initialText, Action<bool> onEditing, Action<string> onAcceptEdit)
         {
             var stackPanel = control.FindVisualDescendent<StackPanel>();
             if (stackPanel == null)
@@ -66,6 +66,8 @@ namespace SettingsStoreExplorer
                 editor.LostFocus -= OnLostFocus;
                 editor.PreviewKeyDown -= OnPreviewKeyDown;
 
+                onEditing(false);
+
                 if (editor.Text != initialText)
                 {
                     onAcceptEdit(editor.Text);
@@ -79,6 +81,7 @@ namespace SettingsStoreExplorer
             label.Visibility = Visibility.Collapsed;
             editor.Visibility = Visibility.Visible;
 
+            onEditing(true);
             editor.SelectAll();
             editor.Focus();
 
