@@ -27,6 +27,8 @@ namespace SettingsStoreExplorer
         /// <param name="commandService">Command service to add command to, not null.</param>
         private SettingsStoreExplorerToolWindowCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 

@@ -1,14 +1,16 @@
 ﻿// Copyright (c) Paul Harrington.  All Rights Reserved.  Licensed under the MIT License.  See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+
 using static SettingsStoreExplorer.SettingsStoreCommandSet;
-using Microsoft.VisualStudio;
-using System.Windows.Controls;
 
 namespace SettingsStoreExplorer
 {
@@ -136,6 +138,8 @@ namespace SettingsStoreExplorer
                     // Update the view model.
                     subCollection.SubCollections.Add(newCollection);
                     _control.SetTreeViewSelection(newCollection);
+                    Telemetry.Client.TrackEvent("AddNewSubCollection");
+
                     InPlaceEditSubCollectionName(newCollection, settingsStore);
                 }
             }
@@ -194,6 +198,9 @@ namespace SettingsStoreExplorer
 
                     // Move focus to the newly-created value and start in-place editing of the name.
                     _control.SetListViewSelection(newProperty);
+
+                    Telemetry.Client.TrackEvent("AddNewProperty", new Dictionary<string, string> { ["Type"] = type.ToString() });
+
                     InPlaceEditPropertyName(newProperty, settingsStore);
                 }
             }
@@ -268,6 +275,8 @@ namespace SettingsStoreExplorer
 
                 // Select the newly-renamed sub-collection.
                 _control.SetTreeViewSelection(subCollection);
+
+                Telemetry.Client.TrackEvent("RenameSubCollection");
             });
         }
 
@@ -310,6 +319,8 @@ namespace SettingsStoreExplorer
 
             // Update the view model.
             parent.SubCollections.Remove(subCollection);
+
+            Telemetry.Client.TrackEvent("DeleteSubCollection");
         }
 
         private void DeletePropertyExecuted()
@@ -337,6 +348,8 @@ namespace SettingsStoreExplorer
 
             // Update the view model.
             property.Parent.Properties.Remove(property);
+
+            Telemetry.Client.TrackEvent("DeleteProperty");
         }
 
         private void RenamePropertyExecuted()
@@ -388,6 +401,8 @@ namespace SettingsStoreExplorer
 
                 // Update the view model (keeping the selection the same)
                 property.Rename(newName);
+
+                Telemetry.Client.TrackEvent("RenameProperty");
             });
         }
 
@@ -421,6 +436,8 @@ namespace SettingsStoreExplorer
             {
                 _control.SetTreeViewSelection(subCollection);
             });
+
+            Telemetry.Client.TrackEvent("Refresh");
         }
     }
 }
