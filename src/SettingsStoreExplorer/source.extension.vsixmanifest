@@ -12,7 +12,7 @@
         <Icon>Resources\SettingsStoreExplorer.128x128.png</Icon>
         <Tags>Settings;Store;Explorer;Registry;Hive</Tags>
     </Metadata>
-    <Installation>
+    <Installation AllUsers="true">
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0, 17.0)" />
     </Installation>
     <Dependencies>
