@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
@@ -23,6 +24,14 @@ using Task = System.Threading.Tasks.Task;
 
 namespace SettingsStoreExplorer
 {
+    public enum Scope
+    {
+        Config = __VsEnclosingScopes.EnclosingScopes_Configuration,
+        User = __VsEnclosingScopes.EnclosingScopes_UserSettings,
+        Remote = __VsEnclosingScopes2.EnclosingScopes_Remote,
+        Roaming
+    }
+
     /// <summary>
     /// Base class for all items in the settings store data-model.
     /// </summary>
@@ -39,30 +48,33 @@ namespace SettingsStoreExplorer
 
         public SettingsStoreSubCollection Parent { get; }
 
-        private static string CombinePaths(string path1, string path2) 
-            => string.IsNullOrEmpty(path1) ? path2 : (path1 + @"\" + path2);
+        private static string CombinePaths(string path1, string path2, char separatorChar) 
+            => string.IsNullOrEmpty(path1) ? path2 : (path1 + separatorChar + path2);
 
         /// <summary>
         /// Path to this settings collection, not including the root node.
         /// </summary>
-        public string Path
-        {
-            get
-            {
-                if (Parent == null)
-                {
-                    // The root item doesn't participate in the path
-                    return "";
-                }
+        public string Path => MakePath(Root.SeparatorChar);
 
-                return CombinePaths(Parent.Path, Name);
-            }
-        }
+        /// <summary>
+        /// Recursive step of <see cref="Path"/> that takes a separator character.
+        /// </summary>
+        /// <param name="separatorChar">The separator character.</param>
+        /// <returns>The path.</returns>
+        private string MakePath(char separatorChar) => Parent == null ? "" : CombinePaths(Parent.MakePath(separatorChar), Name, separatorChar);
 
         /// <summary>
         /// Full path to this settings collection, including the root node.
         /// </summary>
-        public string FullPath => Parent == null ? Name : CombinePaths(Parent.FullPath, Name);
+        public string FullPath => MakeFullPath(Root.SeparatorChar);
+
+
+        /// <summary>
+        /// Recursive step of <see cref="FullPath"/> that takes a separator character.
+        /// </summary>
+        /// <param name="separatorChar">The separator character.</param>
+        /// <returns>The full path.</returns>
+        private string MakeFullPath(char separatorChar) => Parent == null ? Name : CombinePaths(Parent.MakeFullPath(separatorChar), Name, separatorChar);
 
         /// <summary>
         /// The root item. All items have a root (either "Config" or "User").
@@ -403,7 +415,7 @@ namespace SettingsStoreExplorer
     [DebuggerDisplay("Name = {Name} Root")]
     public sealed class RootSettingsStore : SettingsStoreSubCollection
     {
-        public RootSettingsStore(IVsSettingsManager settingsManager, __VsEnclosingScopes enclosingScope, string name) : base(null, name)
+        public RootSettingsStore(IVsSettingsManager settingsManager, Scope enclosingScope, string name) : base(null, name)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             EnclosingScope = enclosingScope;
@@ -411,11 +423,20 @@ namespace SettingsStoreExplorer
             SettingsStore = settingsStore;
         }
 
-        public __VsEnclosingScopes EnclosingScope { get; }
+        public RootSettingsStore(IVsSettingsStore settingsStore, Scope enclosingScope, string name) : base(null, name)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            EnclosingScope = enclosingScope;
+            SettingsStore = settingsStore;
+        }
+
+        public Scope EnclosingScope { get; }
 
         public IVsSettingsStore SettingsStore { get; }
 
-        protected override bool CanRename => false; 
+        protected override bool CanRename => false;
+
+        internal char SeparatorChar => EnclosingScope == Scope.Roaming ? '.' : '\\';
     }
 
     /// <summary>
@@ -425,12 +446,13 @@ namespace SettingsStoreExplorer
     {
         public SettingsStoreSubCollection[] Roots { get; set; }
 
-        public SettingsStoreViewModel(IVsSettingsManager settingsManager)
+        public SettingsStoreViewModel(IVsSettingsManager settingsManager, ISettingsManager roamingSettingsManager)
         {
             Roots = new SettingsStoreSubCollection[] {
-                new RootSettingsStore(settingsManager, __VsEnclosingScopes.EnclosingScopes_Configuration, "Config"),
-                new RootSettingsStore(settingsManager, __VsEnclosingScopes.EnclosingScopes_UserSettings, "User"),
-                new RootSettingsStore(settingsManager, (__VsEnclosingScopes)__VsEnclosingScopes2.EnclosingScopes_Remote, "Remote")
+                new RootSettingsStore(settingsManager, Scope.Config, "Config"),
+                new RootSettingsStore(settingsManager, Scope.User, "User"),
+                new RootSettingsStore(settingsManager, Scope.Remote, "Remote"),
+                new RootSettingsStore(new RoamingSettingsStore(roamingSettingsManager), Scope.Roaming, "Roaming")
             };
         }
 

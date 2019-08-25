@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Microsoft;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
@@ -33,7 +34,7 @@ namespace SettingsStoreExplorer
             InitializeComponent();
         }
 
-        public void InitializeViewModel(IVsSettingsManager settingsManager) => DataContext = new SettingsStoreViewModel(settingsManager);
+        public void InitializeViewModel(IVsSettingsManager vsSettingsManager, ISettingsManager roamingSettingsManager) => DataContext = new SettingsStoreViewModel(vsSettingsManager, roamingSettingsManager);
 
         /// <summary>
         /// Handle right-clicks on tree view items by moving focus to the click-on node so that context menu commands apply to the
