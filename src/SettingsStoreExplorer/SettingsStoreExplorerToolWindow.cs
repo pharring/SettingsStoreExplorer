@@ -243,15 +243,13 @@ namespace SettingsStoreExplorer
                 ThreadHelper.ThrowIfNotOnUIThread();
                 if (newName.Length == 0)
                 {
-                    var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-                    ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming collection", $"A collection name cannot be blank. Try again with a different name.", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
+                    ShowErrorMessage("Error renaming collection", $"A collection name cannot be blank. Try again with a different name.");
                     return;
                 }
 
                 if (newName.IndexOfAny(s_invalidCollectionNameChars) >= 0)
                 {
-                    var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-                    ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming collection", $"A collection name cannot contain a backslash character (\\). Try again with a different name.", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
+                    ShowErrorMessage("Error renaming collection", $"A collection name cannot contain a backslash character (\\). Try again with a different name.");
                     return;
                 }
 
@@ -260,8 +258,7 @@ namespace SettingsStoreExplorer
                 var renamedSubCollection = new SettingsStoreSubCollection(parent, newName);
                 if (settingsStore.CollectionExists(renamedSubCollection.Path))
                 {
-                    var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-                    ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming collection", $"There is already a collection called '{newName}'. Try again with a different name.", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
+                    ShowErrorMessage("Error renaming collection", $"There is already a collection called '{newName}'. Try again with a different name.");
                     return;
                 }
 
@@ -307,9 +304,7 @@ namespace SettingsStoreExplorer
                 return;
             }
 
-            var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-            ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Confirm Collection Delete", $"Are you sure you want to permanently delete '{subCollection.Name}' and all its subcollections?", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_YESNO, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_WARNING, 0, out int result));
-            if (result != (int)MessageBoxResult.Yes)
+            if (!ShowAreYouSureDialog("Confirm Collection Delete", $"Are you sure you want to permanently delete '{subCollection.Name}' and all its subcollections?"))
             {
                 return;
             }
@@ -337,9 +332,7 @@ namespace SettingsStoreExplorer
                 return;
             }
 
-            var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-            ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Confirm Property Delete", $"Are you sure you want to permanently delete '{property.Name}'?", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_YESNO, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_WARNING, 0, out int result));
-            if (result != (int)MessageBoxResult.Yes)
+            if (!ShowAreYouSureDialog("Confirm Property Delete", $"Are you sure you want to permanently delete '{property.Name}'?"))
             {
                 return;
             }
@@ -378,20 +371,18 @@ namespace SettingsStoreExplorer
                 // Allow renaming to blank to support the (Default) value, but only for strings.
                 if (newName.Length == 0 && property.Type != __VsSettingsType.SettingsType_String)
                 {
-                    var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-                    ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming property", "Only a string property may have a blank name. Try again with a different name.", null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
+                    ShowErrorMessage("Error renaming property", "Only a string property may have a blank name. Try again with a different name.");
                     return;
                 }
 
                 // Check for duplicate names.
                 if (settingsStore.PropertyExists(property.CollectionPath, newName))
                 {
-                    var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
                     var message = newName.Length == 0 ?
                         "There is already a (Default) property. Delete it first and try again or use a different name." :
                         $"There is already a property called '{newName}'. Try again with a different name.";
 
-                    ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, "Error renaming property", message, null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int result));
+                    ShowErrorMessage("Error renaming property", message);
                     return;
                 }
 
@@ -438,6 +429,32 @@ namespace SettingsStoreExplorer
             });
 
             Telemetry.Client.TrackEvent("Refresh");
+        }
+
+        /// <summary>
+        /// Show a modal error message box with an error icon.
+        /// </summary>
+        /// <param name="title">The title (caption) of the dialog.</param>
+        /// <param name="message">The error message.</param>
+        private void ShowErrorMessage(string title, string message)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+            ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, title, message, null, 0, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_CRITICAL, 0, out int _));
+        }
+
+        /// <summary>
+        /// Show a Yes/No confirmation dialog with a warning icon.
+        /// </summary>
+        /// <param name="title">The title (caption) of the dialog.</param>
+        /// <param name="prompt">The "are you sure?" message.</param>
+        /// <returns>True if the user selects "Yes" from the dialog. False otherwise.</returns>
+        private bool ShowAreYouSureDialog(string title, string prompt)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+            ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox(0, Guid.Empty, title, prompt, null, 0, OLEMSGBUTTON.OLEMSGBUTTON_YESNO, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST, OLEMSGICON.OLEMSGICON_WARNING, 0, out int result));
+            return result == (int)MessageBoxResult.Yes;
         }
     }
 }
