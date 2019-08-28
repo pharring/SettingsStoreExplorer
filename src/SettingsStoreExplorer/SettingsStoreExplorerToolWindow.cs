@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Settings;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
@@ -84,11 +85,18 @@ namespace SettingsStoreExplorer
             KnownUIContexts.ShellInitializedContext.WhenActivated(InitializeViewModel);
         }
 
+        /// <summary>
+        /// The SVsSettingsPersistenceManager class
+        /// </summary>
+        [Guid("9B164E40-C3A2-4363-9BC5-EB4039DEF653")]
+        private static class SVsSettingsPersistenceManager { }
+
         private void InitializeViewModel()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            var settingsManager = GetService(typeof(SVsSettingsManager)) as IVsSettingsManager;
-            _control.InitializeViewModel(settingsManager);
+            var vsSettingsManager = GetService(typeof(SVsSettingsManager)) as IVsSettingsManager;
+            var roamingSettingsManager = GetService(typeof(SVsSettingsPersistenceManager)) as ISettingsManager;
+            _control.InitializeViewModel(vsSettingsManager, roamingSettingsManager);
 
             Telemetry.Client.TrackPageView(nameof(SettingsStoreExplorerToolWindow));
         }

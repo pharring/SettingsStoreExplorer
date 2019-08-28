@@ -3,7 +3,6 @@
 using System.Globalization;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.Shell.Interop;
 using VsKnownMonikers = Microsoft.VisualStudio.Imaging.KnownMonikers;
 
 namespace SettingsStoreExplorer
@@ -17,11 +16,14 @@ namespace SettingsStoreExplorer
                 case RootSettingsStore rootItem:
                     switch (rootItem.EnclosingScope)
                     {
-                        case __VsEnclosingScopes.EnclosingScopes_UserSettings:
+                        case Scope.User:
                             return VsKnownMonikers.User;
 
-                        case (__VsEnclosingScopes)__VsEnclosingScopes2.EnclosingScopes_Remote:
+                        case Scope.Remote:
                             return VsKnownMonikers.ServerSettings;
+
+                        case Scope.Roaming:
+                            return VsKnownMonikers.SyncServer;
 
                         default:
                             return VsKnownMonikers.Registry;
