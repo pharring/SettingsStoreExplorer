@@ -22,6 +22,9 @@ namespace SettingsStoreExplorer
                         case Scope.Remote:
                             return VsKnownMonikers.ServerSettings;
 
+                        case Scope.Roaming:
+                            return VsKnownMonikers.SyncServer;
+
                         default:
                             return VsKnownMonikers.Registry;
                     }
