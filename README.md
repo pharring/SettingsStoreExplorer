@@ -22,7 +22,7 @@ Access the Settings Store Explorer from the View menu. It's under "View > Other 
 Or you can find it in "Quick search":
 <br/>![Quick Search](marketplace/images/QuickSearch.png)
 
-The Tool Window has two panels. The left hand panel shows three trees: Config, User and Remote. Each tree is a hierarchical collection of sub-collections and properties. The properties for the selected sub-collection are shown in the right hand panel.
+The Tool Window has two panels. The left hand panel shows four trees: Config, User, Remote and Roaming. Each tree is a hierarchical collection of sub-collections and properties. The properties for the selected sub-collection are shown in the right hand panel.
 <br/>![Settings Store Tool Window](marketplace/images/SettingsStoreToolWindow.png)
 
 ## Modifying (editing) settings
@@ -31,7 +31,7 @@ The Tool Window has two panels. The left hand panel shows three trees: Config, U
 
 If you've used the Windows Registry editor (Regedit), this should be familiar.
 
-You can edit a property of the **User** or **Remote** trees by double-clicking it in the right-hand pane. Note that you cannot edit values or collections under the **Config** tree because they are read-only.
+You can edit a property of the **User** or **Remote** trees by double-clicking it in the right-hand pane. Note that you cannot edit values or collections under the **Config** or **Roaming** trees because they are read-only.
 <br/>![Edit DWORD value dialog](marketplace/images/EditDWORDValueDialog.png)
 
 A new sub-collection or values can be created by right-clicking on a collection.
