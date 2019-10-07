@@ -6,11 +6,13 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Settings;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Threading;
 
 namespace SettingsStoreExplorer
 {
-    internal class RoamingSettingsStore : IVsSettingsStore
+    internal class RoamingSettingsStore : IVsWritableSettingsStore
     {
         private readonly ISettingsManager _settingsManager;
         private string[] _names;
@@ -162,7 +164,17 @@ namespace SettingsStoreExplorer
             => string.IsNullOrEmpty(collectionPath) ? propertyName : (collectionPath + "." + propertyName);
 
         public int GetBool(string collectionPath, string propertyName, out int value) => throw new NotImplementedException();
-        public int GetInt(string collectionPath, string propertyName, out int value) => throw new NotImplementedException();
+        public int GetInt(string collectionPath, string propertyName, out int value)
+        {
+            if (_settingsManager.TryGetValue<object>(MakeFullName(collectionPath, propertyName), out object obj) == GetValueResult.Success)
+            {
+                value = Convert.ToInt32(obj);
+                return VSConstants.S_OK;
+            }
+
+            value = 0;
+            return VSConstants.E_FAIL;
+        }
 
         public int GetUnsignedInt(string collectionPath, string propertyName, out uint value)
         {
@@ -176,7 +188,17 @@ namespace SettingsStoreExplorer
             return VSConstants.E_FAIL;
         }
 
-        public int GetInt64(string collectionPath, string propertyName, out long value) => throw new NotImplementedException();
+        public int GetInt64(string collectionPath, string propertyName, out long value)
+        {
+            if (_settingsManager.TryGetValue<object>(MakeFullName(collectionPath, propertyName), out object obj) == GetValueResult.Success)
+            {
+                value = Convert.ToInt64(obj);
+                return VSConstants.S_OK;
+            }
+
+            value = 0;
+            return VSConstants.E_FAIL;
+        }
 
         public int GetUnsignedInt64(string collectionPath, string propertyName, out ulong value)
         {
@@ -211,7 +233,7 @@ namespace SettingsStoreExplorer
         public int GetStringOrDefault(string collectionPath, string propertyName, string defaultValue, out string value) => throw new NotImplementedException();
         public int GetPropertyType(string collectionPath, string propertyName, out uint type)
         {
-            var fullName = string.IsNullOrEmpty(collectionPath) ? propertyName : (collectionPath + "." + propertyName);
+            var fullName = MakeFullName(collectionPath, propertyName);
             var result = _settingsManager.TryGetValue<object>(fullName, out object value);
             if (result == GetValueResult.Success)
             {
@@ -244,8 +266,46 @@ namespace SettingsStoreExplorer
             return VSConstants.E_FAIL;
         }
 
-        public int PropertyExists(string collectionPath, string propertyName, out int pfExists) => throw new NotImplementedException();
-        public int CollectionExists(string collectionPath, out int pfExists) => throw new NotImplementedException();
+        public int PropertyExists(string collectionPath, string propertyName, out int pfExists)
+        {
+            pfExists = 0;
+
+            var fullName = MakeFullName(collectionPath, propertyName);
+
+            foreach (var name in NamesStartingWith(fullName))
+            {
+                if (name == fullName)
+                {
+                    pfExists = 1;
+                    break;
+                }
+
+                // There may be a sub-collection with the same name.
+                // TODO: Can we break here?
+            }
+
+            return VSConstants.S_OK;
+        }
+
+        public int CollectionExists(string collectionPath, out int pfExists)
+        {
+            pfExists = 0;
+
+            foreach (var name in NamesStartingWith(collectionPath))
+            {
+                if (name != collectionPath)
+                {
+                    pfExists = 1;
+                    break;
+                }
+
+                // Found a property from the parent collection with the same
+                // name as the candidate collection. Ignore it.
+            }
+
+            return VSConstants.S_OK;
+        }
+
         public int GetSubCollectionCount(string collectionPath, out uint subCollectionCount) => throw new NotImplementedException();
         public int GetPropertyCount(string collectionPath, out uint propertyCount) => throw new NotImplementedException();
         public int GetLastWriteTime(string collectionPath, SYSTEMTIME[] lastWriteTime) => throw new NotImplementedException();
@@ -279,6 +339,49 @@ namespace SettingsStoreExplorer
             propertyName = null;
             return VSConstants.E_INVALIDARG;
         }
+
+        public int SetBool(string collectionPath, string propertyName, int value) => throw new NotImplementedException();
+
+        public int SetInt(string collectionPath, string propertyName, int value)
+        {
+            var name = MakeFullName(collectionPath, propertyName);
+            ThreadHelper.JoinableTaskFactory.Run(() => _settingsManager.SetValueAsync(name, value, isMachineLocal: false));
+            return VSConstants.S_OK;
+        }
+
+        public int SetUnsignedInt(string collectionPath, string propertyName, uint value) => throw new NotImplementedException();
+        
+        public int SetInt64(string collectionPath, string propertyName, long value)
+        {
+            var name = MakeFullName(collectionPath, propertyName);
+            ThreadHelper.JoinableTaskFactory.Run(() => _settingsManager.SetValueAsync(name, value, isMachineLocal: false));
+            return VSConstants.S_OK;
+        }
+
+        public int SetUnsignedInt64(string collectionPath, string propertyName, ulong value) => throw new NotImplementedException();
+
+        public int SetString(string collectionPath, string propertyName, string value)
+        {
+            var name = MakeFullName(collectionPath, propertyName);
+            ThreadHelper.JoinableTaskFactory.Run(() => _settingsManager.SetValueAsync(name, value, isMachineLocal: false));
+            return VSConstants.S_OK;
+        }
+
+        public int SetBinary(string collectionPath, string propertyName, uint byteLength, byte[] pBytes)
+        {
+            var name = MakeFullName(collectionPath, propertyName);
+            ThreadHelper.JoinableTaskFactory.Run(() => _settingsManager.SetValueAsync(name, pBytes, isMachineLocal: false));
+            return VSConstants.S_OK;
+        }
+
+        public int DeleteProperty(string collectionPath, string propertyName)
+        {
+            // TODO: FIXME It doesn't work.
+            return VSConstants.S_OK;
+        }
+
+        public int CreateCollection(string collectionPath) => throw new NotImplementedException();
+        public int DeleteCollection(string collectionPath) => throw new NotImplementedException();
 
         /// <summary>
         /// Custom comparer for sorting setting names.

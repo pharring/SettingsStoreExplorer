@@ -20,6 +20,12 @@ namespace SettingsStoreExplorer
                 return false;
             }
 
+            if (settingsStoreItem.Root.EnclosingScope == Scope.Roaming)
+            {
+                writableSettingsStore = settingsStoreItem.Root.SettingsStore as IVsWritableSettingsStore;
+                return writableSettingsStore != null;
+            }
+
             return ErrorHandler.Succeeded(settingsManager.GetWritableSettingsStore((uint)settingsStoreItem.Root.EnclosingScope, out writableSettingsStore));
         }
 
