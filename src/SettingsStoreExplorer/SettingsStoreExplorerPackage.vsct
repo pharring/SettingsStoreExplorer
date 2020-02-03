@@ -51,8 +51,18 @@
         <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="TreeViewItemContextMenu" />
       </Group>
 
+      <!-- Group for "Copy Key Name" command in the tree view (collection) context menu -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="CollectionClipboardGroup" priority="0x130">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="TreeViewItemContextMenu" />
+      </Group>
+
       <!-- Group for "Modify" command in the list view (property) context menu -->
       <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="ModifyGroup" priority="0x100">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="ListViewItemContextMenu" />
+      </Group>
+
+      <!-- Group for "Copy Name" and "Copy Value" commands in list view (property) context menu -->
+      <Group guid="guidSettingsStoreExplorerPackageCmdSet" id="PropertyClipboardGroup" priority="0x120">
         <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="ListViewItemContextMenu" />
       </Group>
 
@@ -159,6 +169,30 @@
         </Strings>
       </Button>
 
+      <!-- Copy Key Name command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="CopyKeyNameCommandId" priority="0x0180" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Strings>
+          <ButtonText>&amp;Copy Key Name</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Copy Property Name command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="CopyPropertyNameCommandId" priority="0x0190" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Strings>
+          <ButtonText>&amp;Copy Name</ButtonText>
+        </Strings>
+      </Button>
+
+      <!-- Copy Property Value command -->
+      <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="CopyPropertyValueCommandId" priority="0x01A0" type="Button">
+        <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="AllCommandsGroup"/>
+        <Strings>
+          <ButtonText>Copy &amp;Value</ButtonText>
+        </Strings>
+      </Button>
+
     </Buttons>
 
     <!-- Menus section. -->
@@ -255,6 +289,18 @@
       <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="ListViewItemContextMenu" />
     </CommandPlacement>
 
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="CopyKeyNameCommandId" priority="0x100">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="CollectionClipboardGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="CopyPropertyNameCommandId" priority="0x100">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="PropertyClipboardGroup" />
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidSettingsStoreExplorerPackageCmdSet" id="CopyPropertyValueCommandId" priority="0x110">
+      <Parent guid="guidSettingsStoreExplorerPackageCmdSet" id="PropertyClipboardGroup" />
+    </CommandPlacement>
+
   </CommandPlacements>
   
   <!-- Key Bindings section. -->
@@ -285,6 +331,9 @@
       <IDSymbol name="DeleteCommandId" value="0x0107" />
       <IDSymbol name="ModifyCommandId" value="0x0108" />
       <IDSymbol name="RefreshCommandId" value="0x0109" />
+      <IDSymbol name="CopyKeyNameCommandId" value="0x010A" />
+      <IDSymbol name="CopyPropertyNameCommandId" value="0x010B" />
+      <IDSymbol name="CopyPropertyValueCommandId" value="0x010C" />
 
       <!-- Group IDs -->
       <IDSymbol name="AllCommandsGroup" value="0x0200" />
@@ -295,6 +344,8 @@
       <IDSymbol name="RenameDeleteGroup" value="0x0205" />
       <IDSymbol name="ModifyGroup" value="0x0206" />
       <IDSymbol name="RefreshGroup" value="0x0207" />
+      <IDSymbol name="CollectionClipboardGroup" value="0x0208" />
+      <IDSymbol name="PropertyClipboardGroup" value="0x0209" />
 
       <!-- Menu IDs -->
       <IDSymbol name="SubCollectionNewContextMenu" value="0x300" />

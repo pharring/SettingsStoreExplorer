@@ -25,6 +25,9 @@ namespace SettingsStoreExplorer
         public static readonly CommandID DeleteCommandId = MakeCommandID(0x0107);
         public static readonly CommandID ModifyCommandId = MakeCommandID(0x0108);
         public static readonly CommandID RefreshCommandId = MakeCommandID(0x0109);
+        public static readonly CommandID CopyKeyNameCommandId = MakeCommandID(0x010A);
+        public static readonly CommandID CopyPropertyNameCommandId = MakeCommandID(0x010B);
+        public static readonly CommandID CopyPropertyValueCommandId = MakeCommandID(0x010C);
 
         // Menus
         public static readonly CommandID SubCollectionNewContextMenu = MakeCommandID(0x300);

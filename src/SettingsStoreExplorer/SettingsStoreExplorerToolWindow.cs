@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 using static SettingsStoreExplorer.SettingsStoreCommandSet;
+using static System.Globalization.CultureInfo;
 
 namespace SettingsStoreExplorer
 {
@@ -41,6 +42,9 @@ namespace SettingsStoreExplorer
         private readonly MenuCommand _deleteCommand;
         private readonly MenuCommand _modifyCommand;
         private readonly MenuCommand _refreshCommand;
+        private readonly MenuCommand _copyKeyNameCommand;
+        private readonly MenuCommand _copyPropertyNameCommand;
+        private readonly MenuCommand _copyPropertyValueCommand;
         private SettingsStoreExplorerToolWindowControl _control;
 
         /// <summary>
@@ -60,6 +64,9 @@ namespace SettingsStoreExplorer
             _deleteCommand = new MenuCommand(DeleteExecuted, DeleteCommandId);
             _modifyCommand = new MenuCommand(ModifyExecuted, ModifyCommandId);
             _refreshCommand = new MenuCommand(RefreshExecuted, RefreshCommandId);
+            _copyKeyNameCommand = new MenuCommand(CopyKeyNameExecuted, CopyKeyNameCommandId);
+            _copyPropertyNameCommand = new MenuCommand(CopyPropertyNameExecuted, CopyPropertyNameCommandId);
+            _copyPropertyValueCommand = new MenuCommand(CopyPropertyValueExecuted, CopyPropertyValueCommandId);
         }
 
         protected override void Initialize()
@@ -76,6 +83,9 @@ namespace SettingsStoreExplorer
             commandService.AddCommand(_deleteCommand);
             commandService.AddCommand(_modifyCommand);
             commandService.AddCommand(_refreshCommand);
+            commandService.AddCommand(_copyKeyNameCommand);
+            commandService.AddCommand(_copyPropertyNameCommand);
+            commandService.AddCommand(_copyPropertyValueCommand);
 
             Content = _control = new SettingsStoreExplorerToolWindowControl(this);
 
@@ -437,6 +447,44 @@ namespace SettingsStoreExplorer
             });
 
             Telemetry.Client.TrackEvent("Refresh");
+        }
+
+        private void CopyKeyNameExecuted(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var fullPath = GetSelectedSubCollection().FullPath;
+            Clipboard.SetText(fullPath);
+        }
+
+        private void CopyPropertyNameExecuted(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var name = GetSelectedProperty().Name;
+            Clipboard.SetText(name);
+        }
+
+        private void CopyPropertyValueExecuted(object sender, EventArgs e)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var property = GetSelectedProperty();
+
+            string value;
+
+            switch (property.Type)
+            {
+                case __VsSettingsType.SettingsType_Binary:
+                    value = BitConverter.ToString((byte[])property.Value);
+                    break;
+
+                default:
+                    value = Convert.ToString(property.Value, CurrentCulture);
+                    break;
+            }
+
+            Clipboard.SetText(value);
         }
 
         /// <summary>
