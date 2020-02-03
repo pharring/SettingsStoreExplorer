@@ -1,6 +1,10 @@
 # Settings Store Explorer
 All notable changes will be documented in this file.
 
+## Version [1.0.3] (February 2nd 2020)
+### Added
+- Copy Key Name, Copy Property Value and Copy Property Name commands to context menus.
+
 ## Version [1.0.2] (August 28th 2019)
 ### Added
 - Support for Roaming settings.
@@ -16,6 +20,7 @@ All notable changes will be documented in this file.
 ### Changed
 - Open sourced on https://github.com/pharring/SettingsStoreExplorer
 
+[1.0.3]: https://github.com/pharring/SettingsStoreExplorer/compare/1.0.2..1.0.3
 [1.0.2]: https://github.com/pharring/SettingsStoreExplorer/compare/1.0.1..1.0.2
 [1.0.1]: https://github.com/pharring/SettingsStoreExplorer/compare/1.0.0..1.0.1
 [1.0.0]: https://github.com/pharring/SettingsStoreExplorer/releases/tag/1.0.0
