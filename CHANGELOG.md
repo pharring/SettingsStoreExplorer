@@ -1,6 +1,13 @@
 # Settings Store Explorer
 All notable changes will be documented in this file.
 
+## Version [1.0.4] (June 22nd 2021)
+### Changed
+- Moved the tool window command lower down in the Other Windows sub menu. [Issue #63](https://github.com/pharring/SettingsStoreExplorer/issues/63)
+
+### Added
+- Support for VS 2022 (Preview)
+
 ## Version [1.0.3] (February 2nd 2020)
 ### Added
 - Copy Key Name, Copy Property Value and Copy Property Name commands to context menus.
@@ -20,6 +27,7 @@ All notable changes will be documented in this file.
 ### Changed
 - Open sourced on https://github.com/pharring/SettingsStoreExplorer
 
+[1.0.4]: https://github.com/pharring/SettingsStoreExplorer/compare/1.0.3..1.0.4
 [1.0.3]: https://github.com/pharring/SettingsStoreExplorer/compare/1.0.2..1.0.3
 [1.0.2]: https://github.com/pharring/SettingsStoreExplorer/compare/1.0.1..1.0.2
 [1.0.1]: https://github.com/pharring/SettingsStoreExplorer/compare/1.0.0..1.0.1
