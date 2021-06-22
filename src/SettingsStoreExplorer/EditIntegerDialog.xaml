@@ -30,7 +30,7 @@
                 <Label Content="_Value data:" Margin="10,0,10,4" />
                 <TextBox Name="ValueTextBox" Margin="10,0" Text="{Binding Value, Mode=OneTime}" PreviewTextInput="OnPreviewTextInput" />
             </StackPanel>
-            <GroupBox Grid.Column="1" Header="Base">
+            <GroupBox Grid.Column="1" Header="Base" Margin="10,0">
                 <StackPanel Orientation="Vertical" Margin="10,4">
                     <RadioButton GroupName="NumberFormat" Margin="0,2" Content="_Hexadecimal" IsChecked="{Binding ValueFormat, ConverterParameter={x:Static global:NumberStyles.HexNumber}, Converter={StaticResource numberStylesConverter}, ElementName=editIntegerDialog}" />
                     <RadioButton GroupName="NumberFormat" Margin="0,2" Content="_Decimal" IsChecked="{Binding ValueFormat, ConverterParameter={x:Static global:NumberStyles.Integer}, Converter={StaticResource numberStylesConverter}, ElementName=editIntegerDialog}"/>
