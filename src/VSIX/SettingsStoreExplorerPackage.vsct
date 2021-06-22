@@ -77,7 +77,7 @@
     <Buttons>
       <!-- View/Other Windows/Settings Store -->
       <Button guid="guidSettingsStoreExplorerPackageCmdSet" id="SettingsStoreExplorerToolWindowCommandId" priority="0x0000" type="Button">
-        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS2"/>
         <Icon guid="CustomImages" id="SettingsStoreExplorer" />
         <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
