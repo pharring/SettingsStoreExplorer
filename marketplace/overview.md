@@ -1,5 +1,7 @@
 The Settings Store Explorer extension adds a tool window for viewing and editing the Visual Studio Settings Store. It's like the Windows Registry Editor, but for Visual Studio's internal settings.
 
+Looking for a version that works with **Visual Studio 2022 Preview**? Please [go here](https://marketplace.visualstudio.com/items?itemName=PaulHarrington.SettingsStoreExplorerPreview) to download the preview version.
+
 ## Getting Started
 _Note: This extension collects and transmits anonymized usage statistics to the extension author for product improvement purposes._
 
