@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31410.414
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsStoreExplorer", "SettingsStoreExplorer\SettingsStoreExplorer.csproj", "{4ACB08BB-D2F9-4E35-BD4F-A170D62B6D71}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Marketplace", "Marketplace", "{183A5BD5-90D5-441E-8478-EA6BA967CD0A}"
 	ProjectSection(SolutionItems) = preProject
 		..\marketplace\overview.md = ..\marketplace\overview.md
@@ -27,7 +25,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{0F4DD1
 		..\marketplace\images\ViewMenu.png = ..\marketplace\images\ViewMenu.png
 	EndProjectSection
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SettingsStoreExplorer", "SettingsStoreExplorer\SettingsStoreExplorer.shproj", "{566912FA-295C-430E-B8F3-1140E4490D04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSIX", "VSIX\VSIX.csproj", "{4ACB08BB-D2F9-4E35-BD4F-A170D62B6D71}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SettingsStoreExplorer\SettingsStoreExplorer.projitems*{4acb08bb-d2f9-4e35-bd4f-a170d62b6d71}*SharedItemsImports = 4
+		SettingsStoreExplorer\SettingsStoreExplorer.projitems*{566912fa-295c-430e-b8f3-1140e4490d04}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

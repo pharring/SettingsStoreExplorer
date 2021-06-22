@@ -9,7 +9,7 @@
         <License>LICENSE</License>
         <GettingStartedGuide>https://github.com/pharring/SettingsStoreExplorer#getting-started</GettingStartedGuide>
         <ReleaseNotes>https://github.com/pharring/SettingsStoreExplorer/blob/master/CHANGELOG.md</ReleaseNotes>
-        <Icon>Resources\SettingsStoreExplorer.128x128.png</Icon>
+        <Icon>SettingsStoreExplorer.128x128.png</Icon>
         <Tags>Settings;Store;Explorer;Registry;Hive</Tags>
     </Metadata>
     <Installation>

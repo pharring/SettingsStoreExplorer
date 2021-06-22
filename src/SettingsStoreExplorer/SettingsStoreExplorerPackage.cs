@@ -74,9 +74,9 @@ namespace SettingsStoreExplorer
 
         private async Task<string> GetShellVersionAsync(CancellationToken cancellationToken)
         {
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             if (await GetServiceAsync(typeof(SVsShell)) is IVsShell shell)
             {
-                await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
                 if (ErrorHandler.Succeeded(shell.GetProperty((int)__VSSPROPID5.VSSPROPID_ReleaseVersion, out var obj)) && obj != null)
                 {
                     return obj.ToString();
