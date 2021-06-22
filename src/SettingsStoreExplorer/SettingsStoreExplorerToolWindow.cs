@@ -113,6 +113,7 @@ namespace SettingsStoreExplorer
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var isWritable = e.NewValue is SettingsStoreSubCollection subCollection && subCollection.TryGetWritableSettingsStore(out _);
             var isRoot = e.NewValue is RootSettingsStore;
             _addNewBinaryValueCommand.Enabled = isWritable;
@@ -131,6 +132,7 @@ namespace SettingsStoreExplorer
                 return;
             }
 
+            ThreadHelper.ThrowIfNotOnUIThread();
             var isWritable = e.AddedItems[0] is SettingsStoreProperty property && property.TryGetWritableSettingsStore(out _);
             _modifyCommand.Enabled = isWritable;
             _renameCommand.Enabled = isWritable;
