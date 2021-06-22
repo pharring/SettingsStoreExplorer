@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>566912fa-295c-430e-b8f3-1140e4490d04</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SettingsStoreExplorer</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BinaryToHexDumpConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ControlExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DependencyObjectExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DwordToStringConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EditBinaryDialog.xaml.cs">
+      <DependentUpon>EditBinaryDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)EditIntegerDialog.xaml.cs">
+      <DependentUpon>EditIntegerDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)EditStringDialog.xaml.cs">
+      <DependentUpon>EditStringDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)GenericBooleanConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HandleDoubleClickBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HandleEnterBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HexDumpAddressTextBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HexDumpAsciiTextBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HexDumpControl.xaml.cs">
+      <DependentUpon>HexDumpControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)HexDumpControlCustomTextBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HexDumpControlDataContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HexDumpHexBytesTextBox.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IntegerToStringConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ItemContainerGeneratorExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IVsSettingsStoreExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IVsWritableSettingsStoreExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KnownMonikers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModifyPropertyValueCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObservableCollectionExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Properties\AssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QwordToStringConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RoamingSettingsStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreCommandSet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreExplorerPackage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreExplorerToolWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreExplorerToolWindowCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreExplorerToolWindowControl.xaml.cs">
+      <DependentUpon>SettingsStoreExplorerToolWindowControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreItemExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreItemToImageMonikerConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStorePropertyNameConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStorePropertyValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreTypeToImageMonikerConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreTypeToRegTypeConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SettingsStoreViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Telemetry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextBoxSelectionAdorner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextBoxWithSelectionAdorner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VSPackage.Designer.cs">
+      <DependentUpon>VSPackage.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)CustomImages.vsct" />
+    <Content Include="$(MSBuildThisFileDirectory)Resources\SettingsStoreExplorer.128x128.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)SettingsStoreExplorer.imagemanifest">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)EditBinaryDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)EditIntegerDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)EditStringDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)HexDumpControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Resources\SettingsStoreExplorer.dark.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Resources\SettingsStoreExplorer.light.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)SettingsStoreExplorerToolWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)VsThemeStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)SettingsStoreExplorerPackage.vsct" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)VSPackage.resx">
+      <MergeWithCTO>true</MergeWithCTO>
+      <ManifestResourceName>SettingsStoreExplorer.VSPackage</ManifestResourceName>
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>VSPackage.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="$(MSBuildThisFileDirectory)Resources\SettingsStoreExplorer.16x16.png" />
+  </ItemGroup>
+</Project>
