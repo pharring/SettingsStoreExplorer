@@ -1,6 +1,10 @@
 # Settings Store Explorer
 All notable changes will be documented in this file.
 
+## Version [1.0.5] (November 15th 2021)
+### Changed
+- Removed the Preview tag from the VS 2022 version.
+
 ## Version [1.0.4] (June 22nd 2021)
 ### Changed
 - Moved the tool window command lower down in the Other Windows sub menu. [Issue #63](https://github.com/pharring/SettingsStoreExplorer/issues/63)
